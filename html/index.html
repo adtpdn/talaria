@@ -1608,11 +1608,19 @@
                 padding: 6px 0;
             }
             .report-task-row input[type="checkbox"] {
-                margin-top: 4px;
+                margin-top: 14px;
                 flex-shrink: 0;
+                width: 16px;
+                height: 16px;
+                cursor: pointer;
             }
             .report-task-row .task-item {
                 flex: 1;
+            }
+            .report-tasks {
+                display: flex;
+                flex-direction: column;
+                gap: 4px;
             }
         </style>
         <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
@@ -1863,6 +1871,7 @@
                         class="report-search-input"
                         placeholder="Filter tasks…"
                         autocomplete="off"
+                        oninput="applyReportSearch()"
                     />
                     <select
                         id="reportDateFilter"
@@ -1876,10 +1885,20 @@
                         <option value="week">This week</option>
                         <option value="none">No date set</option>
                     </select>
+                    <select
+                        id="reportWebhook"
+                        class="form-input"
+                        style="font-size: 12px; padding: 4px 8px; width: auto"
+                        title="Webhook target"
+                    >
+                        <option value="coding-dev">coding-dev</option>
+                        <option value="dev-test">dev-test</option>
+                    </select>
                     <button
                         id="reportToggleAllBtn"
                         class="btn-secondary"
                         type="button"
+                        onclick="toggleAllReportTasks()"
                     >
                         Deselect all
                     </button>
@@ -4113,27 +4132,197 @@
             }
 
             // Preview report
+            let reportData = { tasks: [], header_html: "", footer_html: "" };
+            let selectedReportIds = new Set();
+
             async function previewReport() {
                 document.getElementById("reportModal").classList.add("active");
-                document.getElementById("reportPreview").innerHTML =
+                const previewEl = document.getElementById("reportPreview");
+                previewEl.innerHTML =
                     '<p style="color: var(--on-surface-variant);">Loading preview...</p>';
 
                 try {
                     const response = await fetch(
-                        "http://" +
-                            window.location.hostname +
-                            ":" +
-                            (window.location.port === "8082"
-                                ? "8083"
-                                : "8080") +
-                            "/api/report/preview",
+                        `${API}/api/report/preview`,
                     );
-                    const html = await response.text();
-                    document.getElementById("reportPreview").innerHTML = html;
+                    if (!response.ok) throw new Error("HTTP " + response.status);
+                    const data = await response.json();
+                    reportData = data;
+                    // Default: all tasks selected
+                    selectedReportIds = new Set(
+                        (data.tasks || []).map((t) => String(t.id)),
+                    );
+                    renderReportPreview();
                 } catch (error) {
-                    document.getElementById("reportPreview").innerHTML =
-                        '<p style="color: #f85149;">Failed to load preview</p>';
+                    console.error("Report preview failed:", error);
+                    previewEl.innerHTML =
+                        '<p style="color: #f85149;">Failed to load preview: ' +
+                        (error.message || error) +
+                        "</p>";
                 }
+            }
+
+            function getFilteredReportTasks() {
+                const search = (
+                    document.getElementById("reportSearchInput")?.value || ""
+                ).toLowerCase();
+                const dateFilter =
+                    document.getElementById("reportDateFilter")?.value || "all";
+                const now = new Date();
+                const today = new Date(
+                    now.getFullYear(),
+                    now.getMonth(),
+                    now.getDate(),
+                );
+                const yesterday = new Date(today);
+                yesterday.setDate(today.getDate() - 1);
+                const weekStart = new Date(today);
+                weekStart.setDate(today.getDate() - today.getDay());
+
+                return (reportData.tasks || []).filter((task) => {
+                    // text search
+                    if (search) {
+                        const text = (
+                            String(task.id) +
+                            " " +
+                            (task.html || "")
+                                .replace(/<[^>]+>/g, " ")
+                                .toLowerCase()
+                        );
+                        if (!text.includes(search)) return false;
+                    }
+                    // date filter — check the full task object via allTasks
+                    if (dateFilter !== "all") {
+                        const full = allTasks.find(
+                            (t) => String(t.id) === String(task.id),
+                        );
+                        const dateStr =
+                            full?.modified || full?.created || "";
+                        if (!dateStr && dateFilter !== "none") return false;
+                        if (dateFilter === "none") {
+                            if (dateStr) return false;
+                        } else {
+                            const d = new Date(dateStr);
+                            if (isNaN(d)) return false;
+                            const dDay = new Date(
+                                d.getFullYear(),
+                                d.getMonth(),
+                                d.getDate(),
+                            );
+                            if (dateFilter === "today" && dDay < today)
+                                return false;
+                            if (
+                                dateFilter === "yesterday" &&
+                                dDay.getTime() !== yesterday.getTime()
+                            )
+                                return false;
+                            if (
+                                dateFilter === "week" &&
+                                dDay < weekStart
+                            )
+                                return false;
+                        }
+                    }
+                    return true;
+                });
+            }
+
+            function renderReportPreview() {
+                const previewEl = document.getElementById("reportPreview");
+                const filtered = getFilteredReportTasks();
+                if (!filtered.length) {
+                    previewEl.innerHTML = `
+                        ${reportData.header_html || ""}
+                        <p style="color: var(--on-surface-variant); padding: 16px; text-align: center;">
+                            No tasks match the current filter.
+                        </p>
+                        ${reportData.footer_html || ""}
+                    `;
+                    updateReportSelectedCount();
+                    return;
+                }
+                const rows = filtered
+                    .map((task) => {
+                        const id = String(task.id);
+                        const checked = selectedReportIds.has(id)
+                            ? "checked"
+                            : "";
+                        return `
+                            <div class="report-task-row">
+                                <input type="checkbox" data-task-id="${htmlEscape(id)}" ${checked} onchange="toggleReportSelection('${htmlEscape(id)}', this.checked)" />
+                                <div class="task-item-wrapper" style="flex:1">${task.html}</div>
+                            </div>
+                        `;
+                    })
+                    .join("");
+                previewEl.innerHTML = `
+                    ${reportData.header_html || ""}
+                    <div class="report-tasks">${rows}</div>
+                    ${reportData.footer_html || ""}
+                `;
+                updateReportSelectedCount();
+            }
+
+            function htmlEscape(s) {
+                return String(s)
+                    .replace(/&/g, "&amp;")
+                    .replace(/</g, "&lt;")
+                    .replace(/>/g, "&gt;")
+                    .replace(/"/g, "&quot;");
+            }
+
+            function toggleReportSelection(id, on) {
+                if (on) selectedReportIds.add(String(id));
+                else selectedReportIds.delete(String(id));
+                updateReportSelectedCount();
+            }
+
+            function updateReportSelectedCount() {
+                const countEl = document.getElementById("reportSelectedCount");
+                if (countEl) {
+                    countEl.textContent = `${selectedReportIds.size} of ${(reportData.tasks || []).length} selected`;
+                }
+                const btn = document.getElementById("reportToggleAllBtn");
+                if (btn) {
+                    const filtered = getFilteredReportTasks();
+                    const filteredIds = new Set(
+                        filtered.map((t) => String(t.id)),
+                    );
+                    const allSelected =
+                        filtered.length > 0 &&
+                        filtered.every((t) =>
+                            selectedReportIds.has(String(t.id)),
+                        );
+                    btn.textContent = allSelected
+                        ? "Deselect all"
+                        : "Select all";
+                }
+            }
+
+            function toggleAllReportTasks() {
+                const filtered = getFilteredReportTasks();
+                const filteredIds = new Set(
+                    filtered.map((t) => String(t.id)),
+                );
+                const allSelected =
+                    filtered.length > 0 &&
+                    filtered.every((t) =>
+                        selectedReportIds.has(String(t.id)),
+                    );
+                if (allSelected) {
+                    filteredIds.forEach((id) => selectedReportIds.delete(id));
+                } else {
+                    filteredIds.forEach((id) => selectedReportIds.add(id));
+                }
+                renderReportPreview();
+            }
+
+            function applyReportDateFilter() {
+                renderReportPreview();
+            }
+
+            function applyReportSearch() {
+                renderReportPreview();
             }
 
             // Send report
@@ -4143,21 +4332,24 @@
                 btn.disabled = true;
                 btn.innerHTML = '<span class="loading"></span>';
 
+                const webhookSel = document.getElementById("reportWebhook");
+                const webhook = webhookSel ? webhookSel.value : "coding-dev";
+
                 try {
-                    const response = await fetch(
-                        "http://" +
-                            window.location.hostname +
-                            ":" +
-                            (window.location.port === "8082"
-                                ? "8083"
-                                : "8080") +
-                            "/api/report/send",
-                        { method: "POST" },
-                    );
+                    const response = await fetch(`${API}/api/report/send`, {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({
+                            task_ids: Array.from(selectedReportIds),
+                            webhook: webhook,
+                        }),
+                    });
                     const result = await response.json();
 
                     if (result.success) {
-                        showToast("Report sent to Teams successfully!");
+                        showToast(
+                            `Report sent to Teams (${selectedReportIds.size} tasks)`,
+                        );
                     } else {
                         showToast(
                             "Failed to send report: " + result.error,
@@ -5542,6 +5734,11 @@ Start now`;
                     const editor = document.getElementById("taskEditorModal");
                     if (editor && editor.classList.contains("active")) {
                         closeTaskEditor();
+                        return;
+                    }
+                    const report = document.getElementById("reportModal");
+                    if (report && report.classList.contains("active")) {
+                        closeModal();
                     }
                 }
             });
