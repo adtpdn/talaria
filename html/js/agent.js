@@ -1659,7 +1659,8 @@ function closeTerminalSessionsModal() {
 }
 
 async function refreshTerminalSessions() {
-    const container = document.getElementById("terminalSessionsList");
+    // Used by both agentConfigModal (Sessions tab) and agentPanelModal (Sessions view)
+    const container = document.getElementById("terminalSessionsList") || document.getElementById("hermesSessionsList");
     if (!container) return;
     container.innerHTML = '<div style="padding:20px;text-align:center;"><i class="ph ph-spinner" style="animation:spin 1s linear infinite;"></i> Loading...</div>';
     try {
@@ -1684,22 +1685,27 @@ async function refreshTerminalSessions() {
         const tabTaskMap = {};
         terminalTabs.forEach(t => {
             if (t.hermesSessionId && t.taskId) tabTaskMap[t.hermesSessionId] = t.taskId;
-            // Also update tab title from session data
         });
 
-        // Header row with select-all + bulk delete
-        let html = `
-        <div style="display:flex;align-items:center;gap:8px;padding:6px 0 10px;border-bottom:1px solid var(--border-color);position:sticky;top:0;background:var(--header-bg);z-index:2;">
-            <input type="checkbox" id="sessSelectAll" title="Select all" onchange="toggleSelectAllSessions(this.checked)" style="cursor:pointer;width:14px;height:14px;">
-            <span style="font-size:11px;color:var(--on-surface-variant);flex:1;">Session</span>
-            <span style="font-size:11px;color:var(--on-surface-variant);width:80px;">Profile</span>
-            <span style="font-size:11px;color:var(--on-surface-variant);width:100px;">Last Active</span>
-            <span style="width:80px;text-align:right;">
-                <button class="agent-sync-btn" id="sessDeleteSelectedBtn" onclick="deleteSelectedSessions()" style="font-size:10px;padding:2px 7px;color:#f85149;border-color:#f85149;display:none;">
-                    <i class="ph ph-trash" style="font-size:10px;"></i> Delete
-                </button>
-            </span>
-        </div>`;
+        // Check if we're in the agent panel sessions view (has search input)
+        const isPanelView = !!document.getElementById('sessionsSearchInput');
+
+        let html = '';
+        if (isPanelView) {
+            // Panel view: checkbox, search handled by filterSessions()
+            html = `
+            <div style="display:flex;align-items:center;gap:8px;padding: 8px 0px 8px;border-bottom:1px solid var(--border-color);position:sticky;top: -8px;background:var(--header-bg);z-index:2;">
+                <input type="checkbox" id="sessSelectAll" title="Select all" onchange="toggleSelectAllSessions(this.checked)" style="cursor:pointer;width:14px;height:14px;">
+                <span style="font-size:11px;color:var(--on-surface-variant);flex:1;">Session</span>
+                <span style="font-size:11px;color:var(--on-surface-variant);width:80px;">Profile</span>
+                <span style="font-size:11px;color:var(--on-surface-variant);width:100px;">Last Active</span>
+                <span style="width:80px;text-align:right;">
+                    <button class="agent-sync-btn" id="sessDeleteSelectedBtn" onclick="deleteSelectedSessions()" style="font-size:10px;padding:2px 7px;color:#f85149;border-color:#f85149;display:none;">
+                        <i class="ph ph-trash" style="font-size:10px;"></i> Delete
+                    </button>
+                </span>
+            </div>`;
+        }
 
         data.sessions.forEach(s => {
             // Update tab title
@@ -1846,11 +1852,88 @@ function openAgentPanelModal() {
     update2DWorld();
     // Load saved terminal config and populate model selector
     _loadTerminalModelConfig();
+
+    // Restore last active view
+    const savedView = localStorage.getItem('talaria_agent_view') || 'terminal';
+    if (savedView !== 'terminal') {
+        setTimeout(() => switchAgentView(savedView), 50);
+    }
+
+    // Initialize sprite previews if office preview was open
+    if (localStorage.getItem('talaria_office_preview') === 'true') {
+        setTimeout(() => toggleOfficePreview(), 100);
+    }
 }
 
 function closeAgentPanelModal() {
     const modal = document.getElementById("agentPanelModal");
     if (modal) modal.classList.remove("active");
+}
+
+// ── Agent Panel View Switching ───────────────────────────────────────────────
+let _agentActiveView = 'terminal'; // 'terminal' | 'sessions'
+let _officePreviewOpen = false;
+
+function switchAgentView(view) {
+    _agentActiveView = view;
+
+    // Update tab buttons
+    document.querySelectorAll('.agent-nav-tab').forEach(btn => {
+        const isActive = btn.dataset.view === view;
+        btn.classList.toggle('active', isActive);
+        btn.style.color = isActive ? 'var(--primary-color)' : 'var(--on-surface-variant)';
+        btn.style.borderBottomColor = isActive ? 'var(--primary-color)' : 'transparent';
+    });
+
+    // Update view visibility
+    const terminalView = document.getElementById('agentTerminalView');
+    const sessionsView = document.getElementById('agentSessionsView');
+
+    if (view === 'terminal') {
+        terminalView.style.display = 'flex';
+        sessionsView.style.display = 'none';
+        renderTerminalTabs();
+        showTerminalMessages();
+    } else {
+        terminalView.style.display = 'none';
+        sessionsView.style.display = 'flex';
+        refreshTerminalSessions();
+    }
+
+    // Save preference
+    localStorage.setItem('talaria_agent_view', view);
+}
+
+function toggleOfficePreview() {
+    _officePreviewOpen = !_officePreviewOpen;
+    const world = document.getElementById('agent2DWorld');
+    const btn = document.getElementById('toggleOfficePreviewBtn');
+
+    if (_officePreviewOpen) {
+        if (world) world.style.display = 'block';
+        btn.style.color = 'var(--primary-color)';
+        localStorage.setItem('talaria_office_preview', 'true');
+    } else {
+        if (world) world.style.display = 'none';
+        btn.style.color = '';
+        localStorage.setItem('talaria_office_preview', 'false');
+    }
+}
+
+function renderSpritePreviews() {
+    const container = document.getElementById('spritePreviewContainer');
+    if (!container) return;
+
+    container.innerHTML = AGENT_SPRITES.map(sprite => {
+        const color = getColorForString(sprite);
+        return `
+            <div style="display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px;background:var(--surface);border:1px solid var(--border-color);border-radius:6px;min-width:80px;">
+                <div style="width:64px;height:64px;background:url('assets/${sprite}.png') 0px 0px no-repeat;background-size:512px 512px;image-rendering:pixelated;border:1px solid ${color};border-radius:4px;"></div>
+                <span style="font-size:10px;font-weight:600;color:${color};">${sprite}</span>
+                <span style="font-size:9px;color:var(--on-surface-variant);">128×128px</span>
+            </div>
+        `;
+    }).join('');
 }
 
 // ── Terminal model/provider settings ─────────────────────────────────────────
@@ -2358,3 +2441,13 @@ document.addEventListener('click', (e) => {
         _closeSpritePicker();
     }
 });
+
+// Session search filter for panel view
+function filterSessions() {
+    const query = document.getElementById('sessionsSearchInput')?.value.toLowerCase() || '';
+    document.querySelectorAll('#terminalSessionsList .sess-row').forEach(row => {
+        const id = row.dataset.sid.toLowerCase();
+        const title = row.querySelector('span')?.textContent.toLowerCase() || '';
+        row.style.display = (id.includes(query) || title.includes(query)) ? 'flex' : 'none';
+    });
+}

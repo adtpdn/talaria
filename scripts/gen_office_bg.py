@@ -137,8 +137,8 @@ def _draw_poster(d, x, y, w, h):
 
 
 def draw_desks(w=80, h=16):
-    """Desk + monitor + chair + accessories — tileable, transparent above furniture."""
-    img = Image.new('RGBA', (w, h), T)
+    """Desk + monitor + chair + accessories — tileable, wall-colored above furniture."""
+    img = Image.new('RGBA', (w, h), WALL_BG)
     d = ImageDraw.Draw(img)
 
     # Desk unit 1 — centered around x=8
