@@ -1044,11 +1044,22 @@ async function startTerminalSession(tab) {
   tab.messages.push({ role: "info", content: `Starting session (${tab.profile})...` });
   showTerminalMessages();
   try {
+    // Get backend from saved config
+    let backend = 'hermes-agent';
+    try {
+      const cfgRes = await fetch(`${API}/api/agents/terminal/config`);
+      if (cfgRes.ok) {
+        const cfg = await cfgRes.json();
+        if (cfg.backend) backend = cfg.backend;
+      }
+    } catch (e) { /* use default */ }
+
     const requestBody = {
       profile: tab.profile,
       task_id: tab.taskId,
       project: tab.project,
-      model: tab.model
+      model: tab.model,
+      backend: backend
     };
     if (tab.taskId) {
       requestBody.title = `talaria-task-${tab.taskId}`;
@@ -1963,20 +1974,75 @@ async function _loadTerminalModelConfig() {
     } catch (e) { /* ignore */ }
 }
 
+async function loadTerminalConfig() {
+    const urlInput = document.getElementById('terminalProviderUrl');
+    const apiKeyInput = document.getElementById('terminalApiKey');
+    const defaultModelInput = document.getElementById('terminalDefaultModel');
+    const backendSelect = document.getElementById('terminalBackend');
+    try {
+        // 1. Load saved terminal config
+        const res = await fetch(`${API}/api/agents/terminal/config`);
+        const cfg = res.ok ? await res.json() : {};
+        let providerUrl = cfg.provider_url || '';
+        let apiKey = cfg.api_key || '';
+        let savedModel = cfg.model || '';
+        let backend = cfg.backend || 'hermes-agent';
+
+        // 2. If no saved provider_url, pull from Hermes agent config
+        if (!providerUrl) {
+            try {
+                const hermesRes = await fetch(`${API}/api/agents/hermes-local-config`);
+                if (hermesRes.ok) {
+                    const hc = await hermesRes.json();
+                    if (hc.base_url) providerUrl = hc.base_url;
+                    if (hc.api_key) apiKey = apiKey || hc.api_key;
+                }
+            } catch (e) { /* ignore */ }
+        }
+
+        // 3. Apply to UI
+        if (providerUrl && urlInput) {
+            urlInput.value = providerUrl;
+            urlInput.placeholder = '';
+        }
+        if (apiKey && apiKeyInput) {
+            apiKeyInput.value = apiKey;
+        }
+        if (savedModel && defaultModelInput) {
+            defaultModelInput.value = savedModel;
+        }
+        if (backendSelect) {
+            backendSelect.value = backend;
+        }
+    } catch (e) { /* ignore */ }
+}
+
 function openTerminalModelSettings() {
     const panel = document.getElementById('terminalModelSettingsPanel');
     if (!panel) return;
-    panel.style.display = panel.style.display === 'none' ? 'flex' : 'none';
+    const isOpen = panel.style.display !== 'none';
+    panel.style.display = isOpen ? 'none' : 'flex';
+    if (!isOpen) {
+        loadTerminalConfig().then(() => fetchTerminalModels());
+    }
 }
 
 async function fetchTerminalModels(providerUrl) {
     const sel = document.getElementById('terminalModelInline');
     if (!sel) return;
     const urlInput = document.getElementById('terminalProviderUrl');
-    const url = providerUrl || (urlInput && urlInput.value.trim()) || 'http://127.0.0.1:20821';
+    const url = providerUrl || (urlInput && urlInput.value.trim());
+    if (!url) {
+        sel.innerHTML = '<option value="">set provider URL first</option>';
+        return;
+    }
     sel.innerHTML = '<option value="">fetching...</option>';
     try {
-        const res = await fetch(`${API}/api/agents/terminal/models`);
+        const apiKeyInput = document.getElementById('terminalApiKey');
+        const apiKey = apiKeyInput ? apiKeyInput.value.trim() : '';
+        const headers = { 'Accept': 'application/json' };
+        if (apiKey) headers['Authorization'] = `Bearer ${apiKey}`;
+        const res = await fetch(`${API}/api/agents/terminal/models?provider_url=${encodeURIComponent(url)}`, { headers });
         const data = await res.json();
         if (data.models && data.models.length) {
             sel.innerHTML = data.models.map(m =>
@@ -1994,18 +2060,20 @@ async function fetchTerminalModels(providerUrl) {
 
 async function saveTerminalModelConfig() {
     const providerUrl = document.getElementById('terminalProviderUrl')?.value.trim() || '';
-    const model = document.getElementById('terminalDefaultModel')?.value.trim() ||
-                  document.getElementById('terminalModelInline')?.value || '';
+    const apiKey = document.getElementById('terminalApiKey')?.value.trim() || '';
+    const model = document.getElementById('terminalModelInline')?.value ||
+                  document.getElementById('terminalDefaultModel')?.value.trim() || '';
+    const backend = document.getElementById('terminalBackend')?.value || 'hermes-agent';
     try {
         await fetch(`${API}/api/agents/terminal/config`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ provider_url: providerUrl, model })
+            body: JSON.stringify({ provider_url: providerUrl, api_key: apiKey, model, backend })
         });
-        showToast(`Saved: ${model}`, 'success');
-        // Update the inline selector to reflect saved model
-        const sel = document.getElementById('terminalModelInline');
-        if (sel && model) sel.value = model;
+        showToast(`Saved: ${backend} / ${model || 'no model'}`, 'success');
+        // Update the hidden input to reflect saved model
+        const hidden = document.getElementById('terminalDefaultModel');
+        if (hidden) hidden.value = model;
         document.getElementById('terminalModelSettingsPanel').style.display = 'none';
     } catch (e) {
         showToast('Save failed', 'error');

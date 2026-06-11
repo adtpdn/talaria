@@ -1,12 +1,12 @@
 ---
 title: "Decouple Managers with Observer Pattern"
 id: "023"
-status: "progress"
+status: "done"
 priority: 01
 sprint: beta
 category: CORE
 description: "Replace direct manager-to-manager references with a centralized Event Bus based on the Observer pattern."
-modified: "2026-06-03"
+modified: "2026-06-08"
 ---
 
 # Decouple Managers with Observer Pattern

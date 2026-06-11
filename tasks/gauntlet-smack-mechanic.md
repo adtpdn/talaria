@@ -12,7 +12,7 @@ modified: "2026-06-03"
 # Gauntlet: Smack Mechanic
 
 ## Problem
-Without PvP interaction, Gauntlet is a survival race. The Smack mechanic adds a competitive layer, allowing players to actively sabotage opponents and push them into traps.
+Without PvP interaction, Gauntlet is a survival race. The Smack mechanic adds a competitive layer, allowing players to actively sabotage opponents and push them into sticky zones.
 
 ## Solution
 Extend `PlayerMovementManager.try_push()` with a charge/cooldown system and "sticky landing" rules.
@@ -30,7 +30,7 @@ Extend `PlayerMovementManager.try_push()` with a charge/cooldown system and "sti
 
 ## Benefits
 - **Interactive Chaos:** Turns the arena into a tactical battleground.
-- **Synergy:** Creates high-skill combos (Lure $\rightarrow$ Smack into Candy).
+- **Synergy:** Creates high-skill combos (Lure → Smack into Sticky).
 - **Risk/Reward:** The 3s charge window telegraphs intent and makes the attacker vulnerable.
 
 ## Acceptance Criteria

@@ -1,7 +1,7 @@
 ---
 title: "Gauntlet: Cleanser Power-Up"
 id: "072"
-status: "done"
+status: "in_progress"
 priority: 01
 sprint: alpha
 category: CORE
@@ -14,7 +14,7 @@ modified: "2026-06-03"
 # Gauntlet: Cleanser Power-Up
 
 ## Problem
-As the arena reaches 80% sticky, players will inevitably get trapped or boxed in. Without recovery, a single mistake or a well-placed Smack would end a run prematurely.
+As the arena reaches 70–75% sticky, players will inevitably get trapped or boxed in. Without recovery, a single mistake or a well-placed Smack would end a run prematurely.
 
 ## Solution
 Implement a limited-use power-up providing temporary immunity and the ability to clear sticky cells.

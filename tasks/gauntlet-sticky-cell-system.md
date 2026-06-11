@@ -1,44 +1,67 @@
 ---
-title: "Gauntlet: Sticky Cell System"
+title: "Gauntlet: Sticky Cell System (v2)"
 id: "068"
-status: todo
+status: "in_progress"
 priority: 01
 sprint: alpha
 category: CORE
-description: "Implement the 'sticky candy' logic that blocks movement, traps players, and changes the arena layout."
+description: "Implement the 'sticky candy' logic that blocks movement, traps players, and changes the arena layout. Updated for ground growth model."
+modified: "2026-06-10"
 ---
 
-# Gauntlet: Sticky Cell System
+# Gauntlet: Sticky Cell System (v2)
 
 ## Problem
-The Candy Cannon must leave a permanent mark to create escalating pressure. If impacts were temporary, the arena would never reach the intended 80% sticky state by the end of the round, failing to force route adaptation.
+The Candy Pump ground growth system must leave permanent sticky marks to create escalating pressure. In v2, sticky cells grow from existing clusters rather than being hit by projectiles.
 
 ## Solution
-Use GridMap Layer 2 as a dynamic "Sticky Overlay" to manage cell states without destroying the base floor.
+GridMap Layer 2 as dynamic "Sticky Overlay" (same approach, different trigger):
 
-### Technical Implementation
-1. **State Mapping:** Maintain a server-side `sticky_cells: Dictionary` (`Vector2i` $\rightarrow$ `true`).
-2. **Visuals:** Assign `TILE_STICKY = 17` (Pink mesh) to Layer 2. Sync via `main.rpc("sync_grid_item", x, 2, z, TILE_STICKY)`.
-3. **Movement Block:** Modify `PlayerMovementManager.simple_move_to()` to block movement if the destination is sticky (unless `Cleanser` is active).
-4. **Trap Logic:**
-    - **Step-on:** Player is trapped if their current cell becomes sticky.
-    - **Push:** In `try_push()`, stop the player and trap them at the first sticky cell encountered.
-5. **Trapped State:** Disable movement and scoring until a `Cleanser` is used.
+### Cell States
+| State | Description |
+|---|---|
+| SAFE | Can be entered, crossed, collected |
+| TELEGRAPHED | Warned as future sticky, still passable (1s) |
+| STICKY | Covered in sticky candy, cannot pass, traps players |
+| BUBBLE_GROWING | Candy bubble growing, not yet exploded |
+| BLOCKED | NPC or permanent obstacle |
+| CLEANSED | Recently cleaned by Cleanser (may have temp protection) |
 
-## Benefits
-- **Dynamic Layout:** Evolves the arena into a maze, forcing strategic movement.
-- **Emergent PvP:** Enables players to "herd" opponents into sticky zones using Smack.
-- **Efficiency:** Layer 2 overlays are more performant than spawning hundreds of static bodies.
+### State Mapping
+- Server-side `sticky_cells: Dictionary` (`Vector2i` → `true`)
+- Visual: `TILE_STICKY = 17` (deep magenta) on Layer 2
+- Telegraph: `TILE_TELEGRAPH = 18` (amber/syrup glow) on Layer 2
+- Sync via `main.rpc("sync_grid_item", x, 2, z, TILE_STICKY)`
+
+### Sticky Rules
+- Cannot be passed through
+- Cannot be collected from
+- Traps players who step onto it
+- Traps players pushed into it (via Smack)
+- Remains sticky until Cleansed or round ends
+
+### Coverage Target
+- **70%–75%** of playable cells (397–425 cells)
+- Old v1 target was 80% — reduced because growth is more organic
+
+### Path Safety Rule
+Before applying selected sticky cells, check that each active player still has:
+- At least one reachable safe region within 6–8 cells
+- Exception: Final 30 seconds allows forced traps
 
 ## Acceptance Criteria
-- **Collision Check:** Confirm players cannot enter sticky cells.
-- **Trap Verification:** Verify trapping occurs via direct cannon hit or `try_push()`.
-- **Network Sync:** Confirm pink overlay appears on all clients upon host impact.
-- **Bypass Check:** Verify that `Cleanser` allows movement through sticky cells.
+- Players cannot enter sticky cells (unless Cleanser active)
+- Trapping occurs via ground growth or Smack push
+- Pink overlay appears on all clients upon growth tick impact
+- Cleanser allows movement through sticky cells
+- Coverage reaches 70–75% by end of round
 
 ## Migration Checklist
-- [ ] Define `TILE_STICKY = 17` in MeshLibrary.
-- [ ] Implement `sticky_cells` tracking in `GauntletManager`.
-- [ ] Update `PlayerMovementManager.simple_move_to()` with sticky check.
-- [ ] Update `PlayerMovementManager.try_push()` with trap logic.
-- [ ] Implement `trap_player(player_id)` and `sync_grid_item` RPC.
+- [ ] Keep `TILE_STICKY = 17` and `TILE_TELEGRAPH = 18` definitions
+- [ ] Keep `sticky_cells` tracking dictionary
+- [ ] Keep `is_sticky_cell()`, `clear_sticky_cell()`, `_trap_player()` functions
+- [ ] Update `_check_all_players_trapped()` to run after each growth tick (not cannon volley)
+- [ ] Add `CLEANSED = 6` cell state to grid
+- [ ] Add path safety validation before applying growth tick selections
+- [ ] Update coverage target from 80% to 70–75%
+- [ ] Update all "Candy Cannon" references to "Candy Pump" in comments

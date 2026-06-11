@@ -1,14 +1,14 @@
 ---
 title: "Gauntlet: Cleanser Icon Fix"
 id: "077"
-status: "in-progress"
+status: "done"
 priority: 01
 sprint: alpha
 category: BUG
 description: "Cleanser power-up does not display an icon like other power-ups."
 assignee: "default"
 cron_job: "pending"
-modified: "2026-06-04"
+modified: "2026-06-08"
 ---
 
 # Gauntlet: Cleanser Icon Fix

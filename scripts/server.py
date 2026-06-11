@@ -1031,10 +1031,7 @@ class TalariaAPIHandler(http.server.SimpleHTTPRequestHandler):
     def _terminal_config_get(self):
         """Return saved terminal default model/provider config."""
         cfg_file = _BASE / 'data' / 'terminal_config.json'
-        cfg = _load_json(str(cfg_file), {
-            'model': 'kr/claude-sonnet-4.5',
-            'provider_url': 'http://127.0.0.1:20821',
-        })
+        cfg = _load_json(str(cfg_file), {})
         self._json(cfg)
 
     def _terminal_config_save(self):
@@ -1042,40 +1039,63 @@ class TalariaAPIHandler(http.server.SimpleHTTPRequestHandler):
         body = self._read_body()
         cfg_file = _BASE / 'data' / 'terminal_config.json'
         existing = _load_json(str(cfg_file), {})
-        existing.update({k: v for k, v in body.items() if k in ('model', 'provider_url')})
+        existing.update({k: v for k, v in body.items() if k in ('model', 'provider_url', 'api_key', 'backend')})
         _save_json(str(cfg_file), existing)
         self._json({'success': True, 'config': existing})
 
     def _terminal_models(self):
-        """Fetch model list from provider URLs."""
+        """Fetch model list from provider URL."""
         import urllib.request, urllib.error
-        cfg_file = _BASE / 'data' / 'terminal_config.json'
-        cfg = _load_json(str(cfg_file), {})
-        provider_url = cfg.get('provider_url', 'http://127.0.0.1:20821')
+        from urllib.parse import urlparse, parse_qs
 
-        # Try both known local provider ports
-        candidates = [provider_url]
-        for port in ['20821', '20128']:
-            url = f'http://127.0.0.1:{port}'
-            if url != provider_url:
-                candidates.append(url)
+        # Accept provider_url from query param or fall back to saved config
+        parsed = urlparse(self.path)
+        qs = parse_qs(parsed.query)
+        provider_url = qs.get('provider_url', [None])[0]
 
-        for base_url in candidates:
+        # Get API key from Authorization header
+        auth_header = self.headers.get('Authorization', '')
+        api_key = auth_header.replace('Bearer ', '') if auth_header.startswith('Bearer ') else ''
+
+        if not provider_url:
+            cfg_file = _BASE / 'data' / 'terminal_config.json'
+            cfg = _load_json(str(cfg_file), {})
+            provider_url = cfg.get('provider_url', '')
+            if not api_key:
+                api_key = cfg.get('api_key', '')
+
+        # Fall back to Hermes agent config base_url
+        if not provider_url:
             try:
-                req = urllib.request.Request(
-                    f'{base_url}/v1/models',
-                    headers={'Accept': 'application/json'}
-                )
-                with urllib.request.urlopen(req, timeout=3) as resp:
-                    data = json.loads(resp.read().decode())
-                    models = [m.get('id') or m.get('name', '') for m in data.get('data', [])]
-                    models = sorted([m for m in models if m])
-                    self._json({'models': models, 'provider_url': base_url})
-                    return
+                import yaml
+                config_path = Path.home() / '.hermes' / 'config.yaml'
+                if config_path.exists():
+                    data = yaml.safe_load(config_path.read_text()) or {}
+                    provider_url = data.get('model', {}).get('base_url', '')
+                    if not api_key:
+                        api_key = data.get('model', {}).get('api_key', '')
             except Exception:
-                continue
+                pass
 
-        self._json({'models': [], 'error': 'Could not reach any provider URL'})
+        if not provider_url:
+            self._json({'models': [], 'error': 'No provider URL configured'})
+            return
+
+        try:
+            headers = {'Accept': 'application/json'}
+            if api_key:
+                headers['Authorization'] = f'Bearer {api_key}'
+            req = urllib.request.Request(
+                f'{provider_url}/v1/models',
+                headers=headers
+            )
+            with urllib.request.urlopen(req, timeout=3) as resp:
+                data = json.loads(resp.read().decode())
+                models = [m.get('id') or m.get('name', '') for m in data.get('data', [])]
+                models = sorted([m for m in models if m])
+                self._json({'models': models, 'provider_url': provider_url})
+        except Exception as e:
+            self._json({'models': [], 'error': f'Could not reach {provider_url}: {e}'})
 
     def _terminal_start(self):
         body = self._read_body()
@@ -1086,16 +1106,19 @@ class TalariaAPIHandler(http.server.SimpleHTTPRequestHandler):
         prefix = time.strftime("%Y%m%d_%H%M%S", now)
         sid = f"{prefix}_{uuid.uuid4().hex[:6]}"
 
-        # Load saved terminal config for default model
+        # Load saved terminal config for default model and backend
         cfg_file = _BASE / 'data' / 'terminal_config.json'
         saved_cfg = _load_json(str(cfg_file), {})
-        default_model = saved_cfg.get('model', 'kr/claude-sonnet-4.5')
+        default_model = saved_cfg.get('model', '')
+        default_backend = saved_cfg.get('backend', 'hermes-agent')
 
         with TERMINAL_LOCK:
             model = body.get("model") or default_model
+            backend = body.get("backend") or default_backend
             TERMINAL_SESSIONS[sid] = {
                 "profile": profile,
                 "model": model,
+                "backend": backend,
                 "task_id": body.get("task_id"),
                 "project": body.get("project"),
                 "history": [],
@@ -1107,6 +1130,7 @@ class TalariaAPIHandler(http.server.SimpleHTTPRequestHandler):
             "hermes_session_id": sid,
             "profile": profile,
             "model": model,
+            "backend": backend,
             "task_id": body.get("task_id"),
             "project": body.get("project"),
             "history": []
@@ -1123,29 +1147,41 @@ class TalariaAPIHandler(http.server.SimpleHTTPRequestHandler):
             if not s:
                 return self._json({"error": "Session not found"}, 404)
             profile = s["profile"]
+            backend = s.get("backend", "hermes-agent")
             
         import subprocess
-        # If hermes_session_id equals tid, it means it's a fake ID we just generated.
-        # So we don't pass --resume, which allows Hermes to create a new session.
-        cmd = ["hermes", "--profile", profile, "chat", "-Q", "-q", message]
-        if s.get("model"):
-            cmd.extend(["-m", s["model"]])
-        if s.get("hermes_session_id") and s.get("hermes_session_id") != tid:
-            cmd.extend(["--resume", s["hermes_session_id"]])
-            
+        
         if s.get("project"):
             cwd = s["project"]
         else:
             cwd = str(_BASE)
+
+        # Build command based on backend
+        if backend == "opencode":
+            cmd = ["opencode", "-p", message]
+            if s.get("model"):
+                cmd = ["opencode", "-m", s["model"], "-p", message]
+        elif backend == "claude-code":
+            cmd = ["claude", "-p", message]
+            if s.get("model"):
+                cmd = ["claude", "-m", s["model"], "-p", message]
+        else:
+            # Default: hermes-agent
+            cmd = ["hermes", "--profile", profile, "chat", "-Q", "-q", message]
+            if s.get("model"):
+                cmd.extend(["-m", s["model"]])
+            if s.get("hermes_session_id") and s.get("hermes_session_id") != tid:
+                cmd.extend(["--resume", s["hermes_session_id"]])
             
         try:
             res = subprocess.run(cmd, cwd=cwd, capture_output=True, text=True, timeout=600)
 
-            # Extract session ID from stderr if present
+            # Extract session ID from stderr if present (hermes only)
             new_sid = None
-            for line in res.stderr.split("\n"):
-                if "session_id:" in line:
-                    new_sid = line.split("session_id:")[-1].strip()
+            if backend == "hermes-agent":
+                for line in res.stderr.split("\n"):
+                    if "session_id:" in line:
+                        new_sid = line.split("session_id:")[-1].strip()
 
             if new_sid:
                 s["hermes_session_id"] = new_sid
@@ -1169,7 +1205,7 @@ class TalariaAPIHandler(http.server.SimpleHTTPRequestHandler):
                     
                 self._json({"response": out, "hermes_session_id": s.get("hermes_session_id") or tid})
             else:
-                err_msg = res.stderr.strip() or res.stdout.strip() or "Hermes command failed"
+                err_msg = res.stderr.strip() or res.stdout.strip() or f"{backend} command failed"
                 self._json({"error": err_msg}, 500)
         except subprocess.TimeoutExpired as e:
             # Return whatever partial output was captured before timeout

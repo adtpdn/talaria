@@ -1,12 +1,12 @@
 ---
 title: "Implement Unified Backend Facade Pattern"
 id: "002"
-status: "progress"
+status: "done"
 priority: 01
 sprint: alpha
 category: BACKEND
 description: "Centralize direct Nakama client calls into a unified backend facade to improve testability and consistency."
-modified: "2026-06-03"
+modified: "2026-06-08"
 ---
 
 # Implement Unified Backend Facade Pattern

@@ -1,14 +1,14 @@
 ---
 title: "Client Backend Facade"
 id: "039"
-status: "progress"
+status: "done"
 priority: 01
 sprint: alpha
 category: BACKEND
 description: "Migrate all client-side RPC and session calls to use the unified BackendService facade, eliminating direct Nakama calls in UI and managers."
 assignee: "default"
 cron_job: "pending"
-modified: "2026-06-03"
+modified: "2026-06-08"
 ---
 
 # Client Backend Facade

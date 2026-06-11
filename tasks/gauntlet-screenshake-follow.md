@@ -1,14 +1,14 @@
 ---
 title: "Gauntlet: Screenshake Follows Player"
 id: "079"
-status: "in-progress"
+status: "done"
 priority: 01
 sprint: alpha
 category: BUG
 description: "Screenshake effect does not follow player movement during gameplay."
 assignee: "default"
 cron_job: "pending"
-modified: "2026-06-04"
+modified: "2026-06-08"
 ---
 
 # Gauntlet: Screenshake Follows Player

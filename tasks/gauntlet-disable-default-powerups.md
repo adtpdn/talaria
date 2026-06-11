@@ -1,14 +1,14 @@
 ---
 title: "Gauntlet: Disable Default Powerups Except Smack"
 id: "080"
-status: "in-progress"
+status: "done"
 priority: 01
 sprint: alpha
 category: BUG
 description: "Default power-ups are active in Gauntlet mode; only Smack should be available."
 assignee: "default"
 cron_job: "pending"
-modified: "2026-06-04"
+modified: "2026-06-08"
 ---
 
 # Gauntlet: Disable Default Powerups Except Smack

@@ -1,11 +1,12 @@
 ---
 title: "Gauntlet: Tile Spawning & Mission System"
 id: "074"
-status: todo
+status: "in_progress"
 priority: 01
 sprint: alpha
 category: CORE
 description: "Implement the spawning of colored tiles and the mission-based scoring system."
+modified: "2026-06-08"
 ---
 
 # Gauntlet: Tile Spawning & Mission System
@@ -17,7 +18,7 @@ Gauntlet needs a primary objective beyond survival. Players must be driven to mo
 Adapt `GoalsCycleManager` and `GoalManager` for Gauntlet-specific missions.
 
 ### Implementation Details
-1. **Tile Spawning:** Use `StopNGoManager._spawn_mission_tiles()` pattern to distribute colors across the 20x20 grid, excluding the 3x3 NPC zone.
+1. **Tile Spawning:** Use `StopNGoManager._spawn_mission_tiles()` pattern to distribute colors across the 24×24 grid, excluding the 3×3 NPC zone at center (11,11).
 2. **Mission Definition:** Implement cycles (e.g., Cycle 1: Collect 3 Red $\rightarrow$ 3 Blue). Use count-based collection.
 3. **Scoring:** Award points on mission completion and a "Survival Bonus" at 180s.
 4. **Dynamic Respawning:** Respawn tiles in new random non-sticky locations upon mission completion to maintain movement.

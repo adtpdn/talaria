@@ -1,14 +1,14 @@
 ---
 title: "Backend Facade & Flow Decoupling"
 id: "038"
-status: "progress"
+status: "done"
 priority: 01
 sprint: alpha
 category: BACKEND
 description: "Decouple game flows from direct backend calls by implementing a centralized facade with retry policies and error mapping."
 assignee: "default"
 cron_job: "pending"
-modified: "2026-06-03"
+modified: "2026-06-08"
 ---
 
 # Backend Facade & Flow Decoupling

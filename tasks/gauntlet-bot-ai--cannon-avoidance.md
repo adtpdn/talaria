@@ -1,45 +1,63 @@
 ---
-title: "Gauntlet: Bot AI — Cannon Avoidance"
+title: "Gauntlet: Bot AI — Sticky Avoidance & Pathfinding"
 id: "075"
-status: "done"
+status: "in_progress"
 priority: 02
 sprint: alpha
 category: AI
-description: "Adapt Bot controllers to navigate the grid while avoiding candy cannon telegraphs and sticky cells."
-modified: "2026-06-03"
+description: "Adapt Bot controllers to navigate the grid while avoiding sticky cells, candy bubbles, and telegraphed growth zones."
+modified: "2026-06-10"
 ---
 
-# Gauntlet: Bot AI — Cannon Avoidance
+# Gauntlet: Bot AI — Sticky Avoidance & Pathfinding
 
 ## Problem
-Standard bots follow the shortest path. In Gauntlet, this leads them directly into telegraphs or sticky traps. Bots need "survival intelligence" to be viable opponents.
+Standard bots follow shortest path, leading directly into sticky cells or candy bubble explosion zones. In v2, bots need "survival intelligence" for the ground growth system — avoiding growing candy, navigating through shrinking safe routes, and using Cleanser when trapped.
 
 ## Solution
-Adapt `BotController` and `BotStrategicPlanner` to incorporate danger-avoidance into pathfinding.
+Adapt `BotController` and `BotStrategicPlanner` for the growth-based hazard system:
 
-### AI Logic
-1. **Danger-Aware Pathfinding:** Modify A* costs:
-    - **Normal Cell:** Cost = 1.
-    - **Sticky Cell:** Cost = $\infty$.
-    - **Telegraphed Cell:** Cost = 10.
-2. **Reactive Dodging:** If a bot is on a telegraphed cell, trigger "evade" to the nearest non-telegraphed neighbor, prioritizing distance from the center NPC.
-3. **Strategic Planning:** Prioritize the nearest mission tile that is NOT currently telegraphed.
-4. **Smack Interaction:** Bots should attempt to smack other bots if they are in range and near a sticky zone.
+### AI Logic (v2)
+1. **Danger-Aware Pathfinding:** A* cost modification:
+   - Normal Cell: Cost = 1
+   - Sticky Cell: Cost = ∞ (blocked)
+   - Telegraphed Cell: Cost = 10 (high cost, avoid if possible)
+   - Bubble Warning Area: Cost = 8 (avoid 3×3 explosion zones)
+2. **Reactive Dodging:** If on telegraphed cell → "evade" to nearest non-telegraphed neighbor
+3. **Strategic Planning:** Prioritize nearest mission tile NOT currently telegraphed or in bubble warning
+4. **Stuck Recovery:** If no A* path exists to any mission → `escapeSticky()` — move away from nearest sticky cell
+5. **Cleanser Auto-Use:** If trapped and has Cleanser → automatically activate
+6. **Smack Interaction:** Bots smack other bots if in range and near sticky zone
 
-## Benefits
-- **Realistic Opponents:** Bots that dodge and react create a more living, challenging game.
-- **Testing Utility:** Allows for better balance testing of cannon rates and impact sizes.
-- **Reduced Frustration:** Prevents bots from simply walking into traps.
+### Path Invalidation
+Bot paths must be invalidated when:
+- Sticky cells appear (growth tick)
+- Candy bubbles explode
+- A bot gets trapped
+
+### What Changed from v1
+- Old: "Cannon Avoidance" — avoid projectile landing zones
+- New: "Sticky Avoidance" — avoid growing ground candy and bubble zones
+- Old: Pathfinding only considered telegraphed cells
+- New: Pathfinding considers sticky, telegraphed, AND bubble warning areas
+- Added: Stuck recovery fallback when no path exists
+- Added: Auto-cleanser usage when trapped
 
 ## Acceptance Criteria
-- **Avoidance Check:** Confirm bots deviate from the shortest path when a target is telegraphed.
-- **Reaction Time:** Verify bots move off telegraphed cells within 0.5s.
-- **Path Validity:** Confirm bots never enter sticky cells unless they have a Cleanser.
-- **Competitive Behavior:** Verify bots use the Smack mechanic against other bots.
+- Bots deviate from shortest path when target is telegraphed
+- Bots move off telegraphed cells within 0.5s
+- Bots never enter sticky cells unless they have a Cleanser
+- Bots auto-use Cleanser when trapped
+- Bots recover when no path exists (move away from sticky)
+- Bots use Smack mechanic against other bots
+- Bot paths are invalidated when grid changes
 
 ## Migration Checklist
-- [ ] Update `BotStrategicPlanner` to include `TILE_TELEGRAPH` in cost-map.
-- [ ] Implement "Immediate Evade" logic in `BotController`.
-- [ ] Add sticky-cell awareness to pathfinding weights.
-- [ ] Implement "Smack" logic for bots.
-- [ ] Test in 4-bot match to ensure diverse behavior.
+- [ ] Update `BotStrategicPlanner` to include `TILE_TELEGRAPH` and bubble zones in cost-map
+- [ ] Implement "Immediate Evade" logic in `BotController`
+- [ ] Add sticky-cell and bubble awareness to pathfinding weights
+- [ ] Implement `escapeSticky()` fallback for stuck bots
+- [ ] Add path invalidation hooks on growth tick and bubble explosion
+- [ ] Implement auto-cleanser usage in `trap_player()` for bots
+- [ ] Implement "Smack" logic for bots
+- [ ] Test in 4-bot match to ensure diverse behavior

@@ -1,13 +1,14 @@
 ---
 title: "Fix Lobby Currency Sync"
 id: "064"
-status: progress
+status: "done"
 priority: 01
 sprint: alpha
 category: CLIENT
 description: "Synchronize Username, GoldLabel, and StarLabel in lobby ProfileCards with real-time Nakama wallet values."
 assignee: "dev"
 cron_job: "pending"
+modified: "2026-06-08"
 ---
 
 # Fix Lobby Currency Sync
