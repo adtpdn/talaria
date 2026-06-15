@@ -12,14 +12,67 @@
         />
 
         <link
+            id="hljs-theme"
             rel="stylesheet"
             href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css"
         />
         <script src="https://unpkg.com/@phosphor-icons/web"></script>
+        <script>
+            (function () {
+                try {
+                    var stored = localStorage.getItem("theme");
+                    var scheme =
+                        stored === "dark" ||
+                        stored === "light" ||
+                        stored === "ocean" ||
+                        stored === "forest" ||
+                        stored === "sunset" ||
+                        stored === "mono"
+                            ? stored
+                            : "ocean";
+                    document.documentElement.setAttribute("data-theme", scheme);
+                    var hljsThemes = {
+                        dark: "github-dark",
+                        light: "github",
+                        ocean: "nord",
+                        forest: "xt256",
+                        sunset: "monokai-sublime",
+                        mono: "atom-one-dark",
+                    };
+                    var hl = document.getElementById("hljs-theme");
+                    if (hl)
+                        hl.href =
+                            "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/" +
+                            hljsThemes[scheme] +
+                            ".min.css";
+                } catch (e) {}
+            })();
+        </script>
         <style>
             :root {
-                /* Defaults to Dark */
+                /* Default = Talaria Dark */
                 --bg-color: #1c110e;
+                --surface: #291d1a;
+                --text-color: #f4ded9;
+                --header-bg: #291d1a;
+                --border-color: #58423c;
+                --primary-color: #ffb4a3;
+                --on-primary: #621000;
+                --secondary-color: #ffb4a3;
+                --on-secondary: #522216;
+                --tertiary-color: #e9c258;
+                --on-tertiary: #3d2e00;
+                --surface-variant: #291d1a;
+                --on-surface-variant: #dfc0b8;
+                --error-color: #ffb4ab;
+                --on-error: #690005;
+                --hover-color: #e9c258;
+                --on-hover: #3d2e00;
+            }
+
+            [data-theme="dark"] {
+                --bg-color: #1c110e;
+                --surface: #291d1a;
                 --text-color: #f4ded9;
                 --header-bg: #291d1a;
                 --border-color: #58423c;
@@ -39,6 +92,7 @@
 
             [data-theme="light"] {
                 --bg-color: #fff8f6;
+                --surface: #ffe9e4;
                 --text-color: #251916;
                 --header-bg: #ffe9e4;
                 --border-color: #dfc0b8;
@@ -54,6 +108,86 @@
                 --on-error: #ffffff;
                 --hover-color: #755b00;
                 --on-hover: #ffffff;
+            }
+
+            [data-theme="ocean"] {
+                --bg-color: #0b1d2a;
+                --surface: #102a3a;
+                --text-color: #e3f2fd;
+                --header-bg: #102a3a;
+                --border-color: #1f4a64;
+                --primary-color: #4fc3f7;
+                --on-primary: #002a3d;
+                --secondary-color: #80deea;
+                --on-secondary: #00363d;
+                --tertiary-color: #ffd54f;
+                --on-tertiary: #3d2e00;
+                --surface-variant: #102a3a;
+                --on-surface-variant: #b3e5fc;
+                --error-color: #ff8a80;
+                --on-error: #690005;
+                --hover-color: #ffd54f;
+                --on-hover: #3d2e00;
+            }
+
+            [data-theme="forest"] {
+                --bg-color: #0f1f12;
+                --surface: #16291a;
+                --text-color: #e8f5e9;
+                --header-bg: #16291a;
+                --border-color: #2e4d33;
+                --primary-color: #81c784;
+                --on-primary: #003910;
+                --secondary-color: #a5d6a7;
+                --on-secondary: #003912;
+                --tertiary-color: #ffcc80;
+                --on-tertiary: #3d2e00;
+                --surface-variant: #16291a;
+                --on-surface-variant: #c8e6c9;
+                --error-color: #ff8a65;
+                --on-error: #690005;
+                --hover-color: #ffcc80;
+                --on-hover: #3d2e00;
+            }
+
+            [data-theme="sunset"] {
+                --bg-color: #1f0f1a;
+                --surface: #2a1422;
+                --text-color: #fff3e0;
+                --header-bg: #2a1422;
+                --border-color: #5a2e44;
+                --primary-color: #ff8a65;
+                --on-primary: #5a1a00;
+                --secondary-color: #ffab91;
+                --on-secondary: #5a1a00;
+                --tertiary-color: #ffd180;
+                --on-tertiary: #3d2e00;
+                --surface-variant: #2a1422;
+                --on-surface-variant: #ffccbc;
+                --error-color: #ff5252;
+                --on-error: #ffffff;
+                --hover-color: #ffd180;
+                --on-hover: #3d2e00;
+            }
+
+            [data-theme="mono"] {
+                --bg-color: #0e0e0e;
+                --surface: #1a1a1a;
+                --text-color: #e0e0e0;
+                --header-bg: #1a1a1a;
+                --border-color: #3a3a3a;
+                --primary-color: #d0d0d0;
+                --on-primary: #0e0e0e;
+                --secondary-color: #a8a8a8;
+                --on-secondary: #0e0e0e;
+                --tertiary-color: #ffffff;
+                --on-tertiary: #0e0e0e;
+                --surface-variant: #1a1a1a;
+                --on-surface-variant: #bdbdbd;
+                --error-color: #f5f5f5;
+                --on-error: #0e0e0e;
+                --hover-color: #ffffff;
+                --on-hover: #0e0e0e;
             }
 
             * {
@@ -143,6 +277,16 @@
             button.icon-btn i,
             button.icon-btn svg {
                 margin: 0 !important;
+            }
+            button.icon-btn.office-preview-toggle {
+                opacity: 0.45;
+                filter: grayscale(0.2);
+            }
+            button.icon-btn.office-preview-toggle.active {
+                opacity: 1;
+                filter: none;
+                background: var(--primary-color);
+                color: var(--on-primary);
             }
 
             /* Stats */
@@ -1392,7 +1536,7 @@
                 overflow-y: auto;
                 white-space: pre-wrap;
                 color: var(--on-surface);
-                background: var(--background);
+                background: var(--surface);
             }
             .agent-log-box .log-done {
                 color: #3fb950;
@@ -1418,7 +1562,7 @@
                 justify-content: center;
             }
             .agent-action-row button:hover {
-                background: var(--background);
+                background: var(--surface);
             }
 
             /* ── Form Inputs ──────────────────────────────────────────────── */
@@ -1444,7 +1588,7 @@
                 appearance: auto;
                 padding-right: 24px;
                 color: var(--text-color);
-                background: var(--background);
+                background: var(--surface);
             }
             select.form-input option {
                 background: var(--surface);
@@ -1582,13 +1726,26 @@
             }
             .report-toolbar {
                 display: flex;
-                align-items: center;
-                gap: 8px;
+                flex-direction: column;
+                gap: 6px;
                 padding: 8px 12px;
                 border-bottom: 1px solid var(--border-color, #30363d);
             }
+            .report-toolbar-row {
+                display: flex;
+                align-items: center;
+                gap: 6px;
+                flex-wrap: wrap;
+            }
+            .report-select {
+                font-size: 12px !important;
+                padding: 4px 8px !important;
+                width: auto !important;
+                min-width: 100px;
+            }
             .report-search-input {
                 flex: 1;
+                min-width: 120px;
                 padding: 6px 10px;
                 background: var(--surface, #161b22);
                 color: var(--on-surface, #e6edf3);
@@ -1711,11 +1868,11 @@
                     <button
                         id="themeToggle"
                         class="icon-btn"
-                        title="Toggle Light/Dark Mode"
+                        title="Toggle color scheme"
                     >
                         <i
                             id="themeIcon"
-                            class="ph-fill ph-sun"
+                            class="ph-fill ph-moon-stars"
                             style="font-size: 16px"
                         ></i>
                     </button>
@@ -1865,46 +2022,66 @@
                     </button>
                 </div>
                 <div class="report-toolbar">
-                    <input
-                        type="text"
-                        id="reportSearchInput"
-                        class="report-search-input"
-                        placeholder="Filter tasks…"
-                        autocomplete="off"
-                        oninput="applyReportSearch()"
-                    />
-                    <select
-                        id="reportDateFilter"
-                        class="form-input"
-                        style="font-size: 12px; padding: 4px 8px; width: auto"
-                        onchange="applyReportDateFilter()"
-                    >
-                        <option value="all">All dates</option>
-                        <option value="today">Today</option>
-                        <option value="yesterday">Yesterday</option>
-                        <option value="week">This week</option>
-                        <option value="none">No date set</option>
-                    </select>
-                    <select
-                        id="reportWebhook"
-                        class="form-input"
-                        style="font-size: 12px; padding: 4px 8px; width: auto"
-                        title="Webhook target"
-                    >
-                        <option value="coding-dev">coding-dev</option>
-                        <option value="dev-test">dev-test</option>
-                    </select>
-                    <button
-                        id="reportToggleAllBtn"
-                        class="btn-secondary"
-                        type="button"
-                        onclick="toggleAllReportTasks()"
-                    >
-                        Deselect all
-                    </button>
-                    <span id="reportSelectedCount" class="report-selected-count"
-                        >0 selected</span
-                    >
+                    <div class="report-toolbar-row">
+                        <input
+                            type="text"
+                            id="reportSearchInput"
+                            class="report-search-input"
+                            placeholder="Filter tasks…"
+                            autocomplete="off"
+                            oninput="applyReportSearch()"
+                        />
+                        <select
+                            id="reportDateFilter"
+                            class="form-input report-select"
+                            onchange="applyReportFilter()"
+                        >
+                            <option value="all">All dates</option>
+                            <option value="today">Today</option>
+                            <option value="yesterday">Yesterday</option>
+                            <option value="week">This week</option>
+                            <option value="none">No date set</option>
+                        </select>
+                        <select
+                            id="reportStatusFilter"
+                            class="form-input report-select"
+                            onchange="applyReportFilter()"
+                        >
+                            <option value="all">All statuses</option>
+                            <option value="progress">In Progress</option>
+                            <option value="done">Done</option>
+                            <option value="progress+done">In Progress + Done</option>
+                        </select>
+                    </div>
+                    <div class="report-toolbar-row">
+                        <select
+                            id="reportWebhook"
+                            class="form-input report-select"
+                            title="Webhook target"
+                        >
+                            <option value="coding-dev">coding-dev</option>
+                            <option value="dev-test">dev-test</option>
+                        </select>
+                        <input
+                            type="text"
+                            id="reportBoardUrl"
+                            class="report-search-input"
+                            placeholder="Board URL"
+                            style="max-width: 220px"
+                            oninput="updateReportBoardUrl()"
+                        />
+                        <button
+                            id="reportToggleAllBtn"
+                            class="btn-secondary"
+                            type="button"
+                            onclick="toggleAllReportTasks()"
+                        >
+                            Select all
+                        </button>
+                        <span id="reportSelectedCount" class="report-selected-count"
+                            >0 selected</span
+                        >
+                    </div>
                 </div>
                 <div class="report-preview" id="reportPreview">
                     <p style="color: var(--on-surface-variant)">
@@ -2738,7 +2915,7 @@
                                 id="hermesRemoteUrlContainer"
                                 style="
                                     display: none;
-                                    background: var(--background);
+                background: var(--surface);
                                     padding: 10px;
                                     border-radius: 6px;
                                     border: 1px solid var(--border-color);
@@ -3396,7 +3573,7 @@
                             New
                         </button>
                         <button
-                            class="icon-btn"
+                            class="icon-btn office-preview-toggle"
                             id="toggleOfficePreviewBtn"
                             style="font-size: 12px; width: 24px; height: 24px"
                             onclick="toggleOfficePreview()"
@@ -3712,196 +3889,7 @@
                         ></div>
                     </div>
 
-                    <!-- Office Preview Panel (hidden by default, overlays) -->
-                    <div
-                        id="officePreviewPanel"
-                        style="
-                            display: none;
-                            position: absolute;
-                            top: 0;
-                            right: 0;
-                            bottom: 0;
-                            width: 320px;
-                            background: var(--header-bg);
-                            border-left: 1px solid var(--border-color);
-                            z-index: 10;
-                            overflow-y: auto;
-                            padding: 12px;
-                        "
-                    >
-                        <div
-                            style="
-                                display: flex;
-                                justify-content: space-between;
-                                align-items: center;
-                                margin-bottom: 12px;
-                                padding-bottom: 8px;
-                                border-bottom: 1px solid var(--border-color);
-                            "
-                        >
-                            <h3
-                                style="
-                                    font-size: 14px;
-                                    font-weight: 600;
-                                    display: flex;
-                                    align-items: center;
-                                    gap: 8px;
-                                "
-                            >
-                                <i
-                                    class="ph ph-image"
-                                    style="font-size: 18px"
-                                ></i>
-                                Office Preview
-                            </h3>
-                            <button
-                                class="icon-btn"
-                                onclick="toggleOfficePreview()"
-                                title="Close preview"
-                            >
-                                <i class="ph ph-x" style="font-size: 18px"></i>
-                            </button>
-                        </div>
-                        <div
-                            style="
-                                display: flex;
-                                flex-direction: column;
-                                gap: 16px;
-                            "
-                        >
-                            <!-- Wall Preview -->
-                            <div>
-                                <div
-                                    style="
-                                        font-size: 11px;
-                                        color: var(--on-surface-variant);
-                                        margin-bottom: 6px;
-                                        text-transform: uppercase;
-                                        letter-spacing: 0.05em;
-                                    "
-                                >
-                                    Wall (80×24 → 320×96px)
-                                </div>
-                                <div
-                                    style="
-                                        height: 120px;
-                                        background: url(&quot;assets/office_bg_wall.png&quot;)
-                                            repeat-x left top;
-                                        background-size: 320px 96px;
-                                        image-rendering: pixelated;
-                                        border: 1px solid var(--border-color);
-                                        border-radius: 4px;
-                                    "
-                                ></div>
-                            </div>
-                            <!-- Desks Preview -->
-                            <div>
-                                <div
-                                    style="
-                                        font-size: 11px;
-                                        color: var(--on-surface-variant);
-                                        margin-bottom: 6px;
-                                        text-transform: uppercase;
-                                        letter-spacing: 0.05em;
-                                    "
-                                >
-                                    Desks (80×16 → 320×64px)
-                                </div>
-                                <div
-                                    style="
-                                        height: 80px;
-                                        background: url(&quot;assets/office_bg_desks.png&quot;)
-                                            repeat-x left bottom;
-                                        background-size: 320px 64px;
-                                        image-rendering: pixelated;
-                                        border: 1px solid var(--border-color);
-                                        border-radius: 4px;
-                                    "
-                                ></div>
-                            </div>
-                            <!-- Floor Preview -->
-                            <div>
-                                <div
-                                    style="
-                                        font-size: 11px;
-                                        color: var(--on-surface-variant);
-                                        margin-bottom: 6px;
-                                        text-transform: uppercase;
-                                        letter-spacing: 0.05em;
-                                    "
-                                >
-                                    Floor (32×6 → 128×24px)
-                                </div>
-                                <div
-                                    style="
-                                        height: 40px;
-                                        background: url(&quot;assets/office_bg_floor.png&quot;)
-                                            repeat-x left top;
-                                        background-size: 128px 24px;
-                                        image-rendering: pixelated;
-                                        border: 1px solid var(--border-color);
-                                        border-radius: 4px;
-                                    "
-                                ></div>
-                            </div>
-                            <!-- Sprite Preview -->
-                            <div>
-                                <div
-                                    style="
-                                        font-size: 11px;
-                                        color: var(--on-surface-variant);
-                                        margin-bottom: 6px;
-                                        text-transform: uppercase;
-                                        letter-spacing: 0.05em;
-                                    "
-                                >
-                                    Agent Sprites (128×128 each, 8×8 frames)
-                                </div>
-                                <div
-                                    id="spritePreviewContainer"
-                                    style="
-                                        display: flex;
-                                        flex-wrap: wrap;
-                                        gap: 8px;
-                                    "
-                                ></div>
-                            </div>
-                            <!-- Asset Info -->
-                            <div
-                                style="
-                                    font-size: 11px;
-                                    color: var(--on-surface-variant);
-                                    padding: 8px;
-                                    background: var(--surface);
-                                    border-radius: 4px;
-                                    border: 1px solid var(--border-color);
-                                "
-                            >
-                                <div
-                                    style="font-weight: 600; margin-bottom: 4px"
-                                >
-                                    Generated by
-                                    <code>scripts/gen_office_bg.py</code>
-                                </div>
-                                <div
-                                    style="
-                                        display: grid;
-                                        grid-template-columns: 1fr 1fr;
-                                        gap: 4px;
-                                    "
-                                >
-                                    <span>Wall:</span
-                                    ><span>320×96px (tileable)</span>
-                                    <span>Desks:</span
-                                    ><span>320×64px (tileable)</span>
-                                    <span>Floor:</span
-                                    ><span>128×24px (tileable)</span>
-                                    <span>Sprites:</span
-                                    ><span>5 chars × 128×128px</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+
                 </div>
 
                 <!-- 2D Sprite World -->
@@ -4033,31 +4021,64 @@
 
             // Load tasks
 
-            // Theme management
-            function initTheme() {
-                const savedTheme = localStorage.getItem("theme") || "dark";
-                setTheme(savedTheme);
+            // Theme management (cycle through color schemes)
+            const THEMES = ["dark", "light", "ocean", "forest", "sunset", "mono"];
+            const THEME_STORAGE_KEY = "theme";
+            const HLJS_THEMES = {
+                dark: "github-dark",
+                light: "github",
+                ocean: "nord",
+                forest: "xt256",
+                sunset: "monokai-sublime",
+                mono: "atom-one-dark",
+            };
+            const THEME_ICONS = {
+                dark: "ph-fill ph-moon-stars",
+                light: "ph-fill ph-sun",
+                ocean: "ph-fill ph-waves",
+                forest: "ph-fill ph-tree",
+                sunset: "ph-fill ph-fire",
+                mono: "ph-fill ph-palette",
+            };
+
+            function getStoredTheme() {
+                const stored = localStorage.getItem(THEME_STORAGE_KEY);
+                return THEMES.includes(stored) ? stored : "ocean";
             }
 
-            function setTheme(theme) {
+            function getCurrentTheme() {
+                const attr = document.documentElement.getAttribute("data-theme");
+                return THEMES.includes(attr) ? attr : "ocean";
+            }
+
+            function applyTheme(theme) {
                 document.documentElement.setAttribute("data-theme", theme);
-                localStorage.setItem("theme", theme);
+                localStorage.setItem(THEME_STORAGE_KEY, theme);
+
+                const hljs = document.getElementById("hljs-theme");
+                if (hljs && HLJS_THEMES[theme]) {
+                    hljs.href = `https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/${HLJS_THEMES[theme]}.min.css`;
+                }
 
                 const icon = document.getElementById("themeIcon");
-                if (theme === "light") {
-                    icon.className = "ph-fill ph-moon";
-                } else {
-                    icon.className = "ph-fill ph-sun";
+                if (icon) {
+                    icon.className = THEME_ICONS[theme] || "ph-fill ph-waves";
+                }
+                const btn = document.getElementById("themeToggle");
+                if (btn) {
+                    btn.title = `Theme: ${theme[0].toUpperCase() + theme.slice(1)} (click to cycle)`;
                 }
             }
 
+            function initTheme() {
+                applyTheme(getStoredTheme());
+            }
+
             function toggleTheme() {
-                const currentTheme =
-                    document.documentElement.getAttribute("data-theme") ===
-                    "light"
-                        ? "dark"
-                        : "light";
-                setTheme(currentTheme);
+                const current = getCurrentTheme();
+                const idx = THEMES.indexOf(current);
+                const next = THEMES[(idx + 1) % THEMES.length];
+                applyTheme(next);
             }
 
             async function loadTasks() {
@@ -4177,6 +4198,7 @@
 
             async function previewReport() {
                 document.getElementById("reportModal").classList.add("active");
+                initReportBoardUrl();
                 const previewEl = document.getElementById("reportPreview");
                 previewEl.innerHTML =
                     '<p style="color: var(--on-surface-variant);">Loading preview...</p>';
@@ -4188,10 +4210,8 @@
                     if (!response.ok) throw new Error("HTTP " + response.status);
                     const data = await response.json();
                     reportData = data;
-                    // Default: all tasks selected
-                    selectedReportIds = new Set(
-                        (data.tasks || []).map((t) => String(t.id)),
-                    );
+                    // Default: all tasks unselected
+                    selectedReportIds = new Set();
                     renderReportPreview();
                 } catch (error) {
                     console.error("Report preview failed:", error);
@@ -4208,6 +4228,8 @@
                 ).toLowerCase();
                 const dateFilter =
                     document.getElementById("reportDateFilter")?.value || "all";
+                const statusFilter =
+                    document.getElementById("reportStatusFilter")?.value || "all";
                 const now = new Date();
                 const today = new Date(
                     now.getFullYear(),
@@ -4230,6 +4252,18 @@
                                 .toLowerCase()
                         );
                         if (!text.includes(search)) return false;
+                    }
+                    // status filter
+                    if (statusFilter !== "all") {
+                        const full = allTasks.find(
+                            (t) => String(t.id) === String(task.id),
+                        );
+                        const st = (full?.status || task.status || "").toLowerCase();
+                        if (statusFilter === "progress+done") {
+                            if (st !== "done" && st !== "progress") return false;
+                        } else {
+                            if (st !== statusFilter) return false;
+                        }
                     }
                     // date filter — check the full task object via allTasks
                     if (dateFilter !== "all") {
@@ -4270,13 +4304,15 @@
             function renderReportPreview() {
                 const previewEl = document.getElementById("reportPreview");
                 const filtered = getFilteredReportTasks();
+                const boardUrl = getReportBoardUrl();
+                const customFooter = `<div style="margin-top:16px;padding-top:16px;border-top:1px solid #edebe9"><a href="${boardUrl}" style="color:#0078d4;text-decoration:none;font-weight:600">→ Open Talaria Board</a></div></div>`;
                 if (!filtered.length) {
                     previewEl.innerHTML = `
                         ${reportData.header_html || ""}
                         <p style="color: var(--on-surface-variant); padding: 16px; text-align: center;">
                             No tasks match the current filter.
                         </p>
-                        ${reportData.footer_html || ""}
+                        ${customFooter}
                     `;
                     updateReportSelectedCount();
                     return;
@@ -4298,7 +4334,7 @@
                 previewEl.innerHTML = `
                     ${reportData.header_html || ""}
                     <div class="report-tasks">${rows}</div>
-                    ${reportData.footer_html || ""}
+                    ${customFooter}
                 `;
                 updateReportSelectedCount();
             }
@@ -4357,12 +4393,26 @@
                 renderReportPreview();
             }
 
-            function applyReportDateFilter() {
+            function applyReportFilter() {
                 renderReportPreview();
             }
 
             function applyReportSearch() {
                 renderReportPreview();
+            }
+
+            // Board URL management
+            function getReportBoardUrl() {
+                return localStorage.getItem("talaria_board_url") || "http://localhost:8080";
+            }
+            function updateReportBoardUrl() {
+                const url = document.getElementById("reportBoardUrl").value.trim();
+                if (url) localStorage.setItem("talaria_board_url", url);
+                renderReportPreview();
+            }
+            function initReportBoardUrl() {
+                const input = document.getElementById("reportBoardUrl");
+                if (input) input.value = getReportBoardUrl();
             }
 
             // Send report

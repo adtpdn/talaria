@@ -1755,7 +1755,7 @@ async function refreshTerminalSessions() {
                 </div>
                 <div style="width:100px;font-size:11px;color:var(--on-surface-variant);flex-shrink:0;">${escHtml(s.last_active_fmt || '')}</div>
                 <div style="width:80px;display:flex;gap:4px;justify-content:flex-end;flex-shrink:0;">
-                    <button class="icon-btn" style="color:var(--primary-color);" title="Resume" onclick="resumeSessionInTab('${escHtml(s.id)}', '${escHtml(s.profile || 'default')}')">
+                    <button class="icon-btn" title="Resume" onclick="resumeSessionInTab('${escHtml(s.id)}', '${escHtml(s.profile || 'default')}')">
                         <i class="ph ph-play-circle" style="font-size:16px;"></i>
                     </button>
                     <button class="icon-btn" style="color:#f85149;" title="Delete" onclick="deleteTerminalSession('${escHtml(s.id)}')">
@@ -1922,11 +1922,13 @@ function toggleOfficePreview() {
 
     if (_officePreviewOpen) {
         if (world) world.style.display = 'block';
-        btn.style.color = 'var(--primary-color)';
+        btn?.classList.add('active');
+        btn?.setAttribute('title', 'Hide office background preview');
         localStorage.setItem('talaria_office_preview', 'true');
     } else {
         if (world) world.style.display = 'none';
-        btn.style.color = '';
+        btn?.classList.remove('active');
+        btn?.setAttribute('title', 'Office background preview');
         localStorage.setItem('talaria_office_preview', 'false');
     }
 }

@@ -1,12 +1,12 @@
 ---
 title: "Gauntlet: Arena Setup (24×24 Grid with Layers)"
 id: "066"
-status: "in_progress"
+status: "done"
 priority: 01
 sprint: alpha
 category: CORE
 description: "Implement the 24×24 cell grid layout for the Gauntlet arena, including the central NPC forbidden zone and layer-based pressure logic."
-modified: "2026-06-10"
+modified: "2026-06-15"
 ---
 
 # Gauntlet: Arena Setup (24×24 Grid with Layers)
