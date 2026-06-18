@@ -6,7 +6,7 @@ priority: 02
 sprint: alpha
 category: AI
 description: "Adapt Bot controllers to navigate the grid while avoiding sticky cells, candy bubbles, and telegraphed growth zones."
-modified: "2026-06-10"
+modified: "2026-06-18"
 ---
 
 # Gauntlet: Bot AI — Sticky Avoidance & Pathfinding

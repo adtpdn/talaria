@@ -6,7 +6,7 @@ priority: 01
 sprint: alpha
 category: CORE
 description: "Implement the core growth tick timing loop and candidate-based cell selection that replaces the old Candy Cannon projectile system."
-modified: "2026-06-10"
+modified: "2026-06-18"
 ---
 
 # Gauntlet: Growth Tick System

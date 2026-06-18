@@ -6,7 +6,7 @@ priority: 02
 sprint: alpha
 category: POLISH
 description: "Final visual and auditory polish of the Gauntlet mode, including a dedicated 3D arena scene and growth tick VFX."
-modified: "2026-06-10"
+modified: "2026-06-18"
 ---
 
 # Gauntlet: Polish — VFX, SFX, HUD & Arena Scene

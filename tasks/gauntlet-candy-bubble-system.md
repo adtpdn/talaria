@@ -6,7 +6,7 @@ priority: 01
 sprint: alpha
 category: CORE
 description: "Implement the candy bubble anti-camping hazard that grows from 1×1 and explodes into 3×3 sticky areas."
-modified: "2026-06-10"
+modified: "2026-06-18"
 ---
 
 # Gauntlet: Candy Bubble System

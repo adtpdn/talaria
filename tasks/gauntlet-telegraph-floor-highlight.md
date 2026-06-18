@@ -6,7 +6,7 @@ priority: 02
 sprint: alpha
 category: FEATURE
 description: "Add temporary floor highlight before growth tick cells become sticky, improving readability of incoming danger."
-modified: "2026-06-10"
+modified: "2026-06-18"
 ---
 
 # Gauntlet: Telegraph Floor Highlight Before Growth

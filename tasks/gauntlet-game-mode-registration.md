@@ -6,7 +6,7 @@ priority: 01
 sprint: alpha
 category: CORE
 description: "Register the 'Candy Pump Survival' mode into the game's mode system and lobby to allow selection and configuration."
-modified: "2026-06-10"
+modified: "2026-06-18"
 ---
 
 # Gauntlet: Game Mode Registration

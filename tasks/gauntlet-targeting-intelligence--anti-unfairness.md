@@ -6,7 +6,7 @@ priority: 01
 sprint: alpha
 category: CORE
 description: "Implement the cellular-automation-style candidate scoring system for weighted cell selection, replacing the old cannon targeting logic."
-modified: "2026-06-10"
+modified: "2026-06-18"
 ---
 
 # Gauntlet: Candidate Scoring System

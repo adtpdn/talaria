@@ -6,7 +6,7 @@ priority: 02
 sprint: beta
 category: ASSETS
 description: "Integrate new dasher animations from assets/characters/dashers/ into the player animation-pack library."
-modified: "2026-06-11"
+modified: "2026-06-18"
 ---
 ### Goal / Risk
 

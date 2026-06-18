@@ -8,7 +8,7 @@ category: CORE
 description: "Implement the Cleanser power-up that allows players to move through and clear sticky candy."
 assignee: "default"
 cron_job: "pending"
-modified: "2026-06-03"
+modified: "2026-06-18"
 ---
 
 # Gauntlet: Cleanser Power-Up

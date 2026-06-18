@@ -6,7 +6,7 @@ priority: 01
 sprint: alpha
 category: CORE
 description: "Implement the spawning of colored tiles and the mission-based scoring system."
-modified: "2026-06-08"
+modified: "2026-06-18"
 ---
 
 # Gauntlet: Tile Spawning & Mission System

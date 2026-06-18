@@ -6,7 +6,7 @@ priority: 01
 sprint: alpha
 category: CORE
 description: "Implement the 'sticky candy' logic that blocks movement, traps players, and changes the arena layout. Updated for ground growth model."
-modified: "2026-06-10"
+modified: "2026-06-18"
 ---
 
 # Gauntlet: Sticky Cell System (v2)
