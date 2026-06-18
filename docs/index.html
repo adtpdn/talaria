@@ -4106,6 +4106,9 @@
                         if (statusActions) statusActions.style.display = "none";
                         // Hide check buttons on cards
                         document.querySelectorAll(".card-check-btn").forEach(b => b.style.display = "none");
+                        // Hide missing logo
+                        const logo = document.querySelector("h1 img");
+                        if (logo) logo.style.display = "none";
                         // Static mode flag
                         window._staticMode = true;
                     }
