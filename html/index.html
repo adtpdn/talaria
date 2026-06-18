@@ -4093,10 +4093,21 @@
                     updateStats();
 
                     if (!isLocalhost) {
-                        document.getElementById("reportBtn").style.display =
-                            "none";
-                        document.getElementById("sendReportBtn").style.display =
-                            "none";
+                        // Hide local-only buttons
+                        ["reportBtn", "sendReportBtn", "agentPanelBtn", "batchCheckBtn"].forEach(id => {
+                            const el = document.getElementById(id);
+                            if (el) el.style.display = "none";
+                        });
+                        // Hide project bar
+                        const projectBar = document.getElementById("projectBar");
+                        if (projectBar) projectBar.style.display = "none";
+                        // Hide task status move buttons & editor (read-only mode)
+                        const statusActions = document.getElementById("taskStatusActions");
+                        if (statusActions) statusActions.style.display = "none";
+                        // Hide check buttons on cards
+                        document.querySelectorAll(".card-check-btn").forEach(b => b.style.display = "none");
+                        // Static mode flag
+                        window._staticMode = true;
                     }
                 } catch (error) {
                     showToast("Failed to load tasks", "error");
@@ -5850,12 +5861,14 @@ Start now`;
                     if (e.target.id === "taskEditorModal") closeTaskEditor();
                 });
 
-            // Auto-refresh every 30 seconds
-            setInterval(loadTasks, 30000);
+            // Auto-refresh every 30 seconds (skip in static/GitHub Pages mode)
+            if (!window._staticMode) {
+                setInterval(loadTasks, 30000);
+            }
 
             // Initial load
             initTheme();
-            loadProjects();
+            if (!window._staticMode) loadProjects();
             loadTasks();
 
             // Drag-to-scroll for board

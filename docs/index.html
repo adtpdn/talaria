@@ -4094,8 +4094,7 @@
 
                     if (!isLocalhost) {
                         // Hide local-only buttons
-                        const hideIds = ["reportBtn", "sendReportBtn", "agentPanelBtn", "batchCheckBtn"];
-                        hideIds.forEach(id => {
+                        ["reportBtn", "sendReportBtn", "agentPanelBtn", "batchCheckBtn"].forEach(id => {
                             const el = document.getElementById(id);
                             if (el) el.style.display = "none";
                         });
