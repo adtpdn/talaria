@@ -679,7 +679,7 @@ class TalariaAPIHandler(http.server.SimpleHTTPRequestHandler):
     def _build_report_footer(self):
         return f'''
             <div style="margin-top:16px;padding-top:16px;border-top:1px solid #edebe9">
-                <a href="http://localhost:8080" style="color:#0078d4;text-decoration:none;font-weight:600">→ Open Talaria Board</a>
+                <a href="https://dev.klud.top/talaria/" style="color:#0078d4;text-decoration:none;font-weight:600">→ Open Talaria Board</a>
             </div>
         </div>'''
 

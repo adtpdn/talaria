@@ -182,7 +182,7 @@ PAYLOAD=$(echo "$PAYLOAD" | jq '.attachments[0].content.body += [{
   "actions": [{
     "type": "Action.OpenUrl",
     "title": "Open Talaria Board",
-    "url": "http://localhost:8080",
+    "url": "https://dev.klud.top/talaria/",
     "style": "positive"
   }]
 }]')
