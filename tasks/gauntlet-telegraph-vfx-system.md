@@ -1,12 +1,13 @@
 ---
 title: "Gauntlet: Telegraph VFX System (v2)"
 id: "069"
-status: "in_progress"
+status: "done"
+blocked_by: ["067"]
 priority: 01
 sprint: alpha
 category: CORE
 description: "Implement the 1-second visual and auditory warning system before growth tick cells become sticky."
-modified: "2026-06-18"
+modified: "2026-06-25"
 ---
 
 # Gauntlet: Telegraph VFX System (v2)
@@ -52,9 +53,27 @@ With 4–10 cells telegraphing simultaneously, optimize:
 - Performance stays above 60 FPS with 10 simultaneous telegraphs
 
 ## Migration Checklist
-- [ ] Keep `TILE_TELEGRAPH = 18` definition
-- [ ] Update `sync_telegraph` RPC to accept array of Vector2i (4–10 cells)
-- [ ] Update VFX logic for batch telegraph (not single cell)
-- [ ] Batch particle effects and audio for simultaneous cells
-- [ ] Remove old cannon-specific telegraph logic
-- [ ] Add light screen shake on growth tick impact (not medium like cannon)
+- [x] Keep `TILE_TELEGRAPH = 18` definition
+- [x] Update `sync_telegraph` RPC to accept array of Vector2i (4–10 cells) — `sync_growth_telegraph(cells)` batch RPC from #067
+- [x] Update VFX logic for batch telegraph (not single cell)
+- [x] Batch particle effects and audio for simultaneous cells (single RPC per tick)
+- [x] Remove old cannon-specific telegraph logic (removed in #067; no `sync_telegraph`/`sync_impact` left)
+- [x] Add light screen shake on growth tick impact (not medium like cannon) — `shake(0.15, 0.4)` in `sync_growth_apply`
+
+## Implementation Notes (2026-06-25)
+Most of the telegraph pipeline shipped with the #067 growth loop; this task added
+the **two-stage VFX** the spec calls for:
+- `_spawn_telegraph_highlight()` now runs an **amber** build-up (0–0.8s, alpha
+  ramps 0→0.55) then a **flash** (0.8–1.0s, emission energy 1.5→4.0 + alpha→0.9)
+  right before impact, instead of the old single pink pulse. Amber `(1.0, 0.65,
+  0.1)` is deliberately distinct from the pink/magenta sticky overlay (`TILE_STICKY
+  = 17`) so the two never read alike.
+- Flow per growth tick (server → all clients via `sync_growth_telegraph`):
+  `TILE_TELEGRAPH = 18` placed on Layer 2 (still passable) + amber highlight +
+  warning audio (`generate_tile`) → after `telegraph_duration` (1.0s) →
+  `sync_growth_apply` swaps to `TILE_STICKY`, light screen shake, splash particles,
+  `tile_scatter` audio.
+- 4–10 cells telegraph simultaneously (the growth-tick batch), single RPC each,
+  no per-cell staggering.
+
+Live-only check (not headless-testable): 60 FPS with 10 simultaneous telegraphs.

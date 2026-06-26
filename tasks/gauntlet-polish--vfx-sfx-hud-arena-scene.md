@@ -1,12 +1,13 @@
 ---
 title: "Gauntlet: Polish — VFX, SFX, HUD & Arena Scene"
 id: "076"
-status: "in_progress"
+status: "todo"
+blocked_by: ["069", "074", "082", "072"]
 priority: 02
 sprint: alpha
 category: POLISH
 description: "Final visual and auditory polish of the Gauntlet mode, including a dedicated 3D arena scene and growth tick VFX."
-modified: "2026-06-18"
+modified: "2026-06-23"
 ---
 
 # Gauntlet: Polish — VFX, SFX, HUD & Arena Scene

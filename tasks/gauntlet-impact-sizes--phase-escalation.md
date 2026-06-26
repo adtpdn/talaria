@@ -1,12 +1,13 @@
 ---
 title: "Gauntlet: Growth Phase Escalation (Replaces Impact Sizes)"
 id: "070"
-status: "in_progress"
+status: "done"
+blocked_by: ["067"]
 priority: 01
 sprint: alpha
 category: CORE
 description: "Implement phase-based difficulty escalation for the ground growth system, replacing the old impact shape (1×1, 1×2, 2×2) system."
-modified: "2026-06-18"
+modified: "2026-06-25"
 ---
 
 # Gauntlet: Growth Phase Escalation
@@ -64,9 +65,24 @@ In addition to normal growth, candy bubbles provide anti-camping disruption:
 - Phase transitions are clearly visible to players
 
 ## Migration Checklist
-- [ ] Replace `phase_configs` (cannon-based) with `phase_growth_config` (growth-based)
-- [ ] Implement layer-based targeting distribution per phase
-- [ ] Update `_start_phase()` to configure growth parameters instead of cannon parameters
-- [ ] Add bubble spawn timing per phase
-- [ ] Remove old impact shape logic
-- [ ] Update phase HUD labels: "Outer Pressure" → "Middle Pressure" → "Inner Survival"
+- [x] Replace `phase_configs` (cannon-based) with `phase_growth_config` (growth-based)
+- [x] Implement layer-based targeting distribution per phase (via `layer_weights` + candidate scoring #073)
+- [x] Update `_start_phase()` to configure growth parameters instead of cannon parameters
+- [x] Add bubble spawn timing per phase (#082: `MAX_BUBBLES_PER_PHASE = [0, 2, 3]`)
+- [x] Remove old impact shape logic (`_get_shape_footprint`, shape weights — gone in #067)
+- [x] Update phase HUD labels: "Outer Pressure" → "Middle Pressure" → "Inner Survival"
+
+## Implementation Notes (2026-06-25)
+Phase escalation landed with the #067 growth loop; this task finalized it and
+renamed the player-facing HUD labels to match the spec:
+- `phase_growth_config` (gauntlet_manager.gd:104): cells-per-tick 4–6 / 6–8 / 8–10
+  and `layer_weights` (outer/middle/inner) per phase. Read per-tick by
+  `_cells_this_tick()` and `_score_layer_priority()`.
+- Bubbles per phase 0/2/3 via #082 (`MAX_BUBBLES_PER_PHASE`).
+- HUD: `_phase_to_string()` now returns "Outer Pressure" / "Middle Pressure" /
+  "Inner Survival"; `_update_hud_phase()` colors + icons match (🍬 pink → ⚠️ gold
+  → 💀 red). Enum names (`OPEN_ARENA` etc.) unchanged — display strings only.
+- No cannon-shape leftovers remain.
+
+Tests: `test_gauntlet_growth_tick.gd` (phase configs) + `test_gauntlet_tile_spawning.gd`
+(phase label strings) green. Full gauntlet suite: 146/146.

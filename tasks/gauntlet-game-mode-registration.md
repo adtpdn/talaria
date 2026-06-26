@@ -1,12 +1,13 @@
 ---
 title: "Gauntlet: Game Mode Registration"
 id: "065"
-status: "in_progress"
+status: "done"
+blocked_by: []
 priority: 01
 sprint: alpha
 category: CORE
 description: "Register the 'Candy Pump Survival' mode into the game's mode system and lobby to allow selection and configuration."
-modified: "2026-06-18"
+modified: "2026-06-23"
 ---
 
 # Gauntlet: Game Mode Registration
@@ -44,10 +45,10 @@ Integrate the Gauntlet mode into the existing `GameMode` enum and `LobbyManager`
 - **Startup Flow:** Verify that `GauntletManager` is successfully added to `main` and `_setup_arena()` is called on start.
 
 ## Migration Checklist
-- [ ] Update `scripts/game_mode.gd` enum and string mappings (rename to "Candy Pump Survival").
-- [ ] Update `scripts/managers/lobby_manager.gd` with new mode name and area mapping.
-- [ ] **Replace** `gauntlet_cannon_interval`/`gauntlet_volley_size` settings with `gauntlet_growth_interval`/`gauntlet_cells_per_tick`.
-- [ ] Implement new `gauntlet_*` settings and RPCs in `LobbyManager`.
-- [ ] Add `gauntlet_manager` instantiation block to `main.gd`'s `_init_managers()`.
-- [ ] Add `gauntlet_manager._setup_arena()` branch to `main.gd`'s `_setup_host_game()`.
-- [ ] Add `gauntlet_manager.start_game_mode()` branch to `main.gd`'s `_start_game()`.
+- [x] Update `scripts/game_mode.gd` enum and string mappings (rename to "Candy Pump Survival").
+- [x] Update `scripts/managers/lobby_manager.gd` with new mode name and area mapping.
+- [x] **Replace** `gauntlet_cannon_interval`/`gauntlet_volley_size` settings with `gauntlet_growth_interval`/`gauntlet_cells_per_tick`.
+- [x] Implement new `gauntlet_*` settings and RPCs in `LobbyManager`.
+- [x] Add `gauntlet_manager` instantiation block to `main.gd`'s `_init_managers()`.
+- [x] Add `gauntlet_manager._setup_arena()` branch to `main.gd`'s `_setup_host_game()`.
+- [x] Add `gauntlet_manager.start_game_mode()` branch to `main.gd`'s `_start_game()`.

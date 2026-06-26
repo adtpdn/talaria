@@ -1,12 +1,13 @@
 ---
 title: "Gauntlet: Candidate Scoring System (Replaces Targeting Intelligence)"
 id: "073"
-status: "in_progress"
+status: "done"
+blocked_by: ["067"]
 priority: 01
 sprint: alpha
 category: CORE
 description: "Implement the cellular-automation-style candidate scoring system for weighted cell selection, replacing the old cannon targeting logic."
-modified: "2026-06-18"
+modified: "2026-06-25"
 ---
 
 # Gauntlet: Candidate Scoring System
@@ -100,15 +101,29 @@ CandidateScore =
 - No unfair instant traps before final 30 seconds
 
 ## Migration Checklist
-- [ ] Implement `_generate_candidates()` — iterate all SAFE cells, calculate scores
-- [ ] Implement `_calculate_candidate_score()` — full formula with all components
-- [ ] Implement `_select_cells_weighted()` — weighted random selection from scored candidates
-- [ ] Implement layer priority lookup per phase
-- [ ] Implement sticky neighbor counting (8-directional)
-- [ ] Implement player pressure scoring (distance-based)
-- [ ] Implement cluster growth detection
-- [ ] Implement camping detection (4×4 area tracking per player)
-- [ ] Implement repetition penalty (recent target tracking)
-- [ ] Remove old `_select_targets()`, `_get_nearby_valid_cells()`, targeting weights
-- [ ] Remove `last_targeted_player_id` tracking
-- [ ] Test that growth produces organic, broken patterns (not rings or squares)
+- [x] Implement `_generate_candidates()` — iterate all SAFE cells, calculate scores
+- [x] Implement `_calculate_candidate_score()` — full formula with all components
+- [x] Implement `_select_cells_weighted()` — weighted random selection from scored candidates
+- [x] Implement layer priority lookup per phase (`_score_layer_priority`)
+- [x] Implement sticky neighbor counting (8-directional) (`_score_sticky_neighbor`)
+- [x] Implement player pressure scoring (distance-based) (`_score_player_pressure`)
+- [x] Implement cluster growth detection (`_score_cluster_growth`)
+- [x] Implement camping detection (4×4 area tracking per player) (`_camp_tracking` + `_score_camping_pressure`)
+- [x] Implement repetition penalty (recent target tracking) (`_score_repetition`)
+- [x] Remove old `_select_targets()`, `_get_nearby_valid_cells()`, targeting weights (done in #067)
+- [x] Remove `last_targeted_player_id` tracking (done in #067)
+- [ ] Test that growth produces organic, broken patterns (not rings or squares) — deferred: live playtest (component logic verified by 21/21 unit tests)
+
+## Implementation Notes (2026-06-24)
+Full formula in `_calculate_candidate_score(pos, player_cells)`:
+`LayerPriority + StickyNeighbor + InwardPressure + PlayerPressure + ClusterGrowth + CampingPressure + RandomNoise(±20) + MovementBuffer + PathSafety + Repetition`
+
+Each component is its own testable fn: `_score_layer_priority`, `_score_sticky_neighbor`, `_score_inward_pressure`, `_score_player_pressure`, `_score_cluster_growth`, `_score_camping_pressure`, `_score_movement_buffer`, `_score_path_safety` (soft; hard guarantee stays in `_apply_path_safety` from #068), `_score_repetition`.
+
+Camping: `_update_camp_tracking(delta)` runs each server tick in `_process`, accumulating per-player time in their 4×4 region (`_region_of`), reset on region change. `_camp_time_for_region` returns the max camp time for scoring.
+
+`_generate_candidates()` gathers player cells once per tick and threads them into scoring (avoids re-querying the scene tree per cell).
+
+`MovementBuffer` here is a soft proximity penalty; the full hidden-safe-zone system is task #083.
+
+Tests: `tests/test_gauntlet_scoring.gd` — 21/21 passing (component + composition + camping accumulation).

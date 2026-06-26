@@ -1,7 +1,7 @@
 ---
 title: "Set up GUT Testing Framework"
 id: "025"
-status: todo
+status: done
 priority: 02
 sprint: beta
 category: TESTING
@@ -24,8 +24,8 @@ Install and configure the GUT (Godot Unit Test) framework for automated testing.
 - GUT addon from asset library
 ## Acceptance Criteria
 
-- [ ] GUT addon installed and configured
-- [ ] Test directory structure created
-- [ ] Test runner script functional
-- [ ] Sample test runs successfully
-- [ ] Documentation for writing tests created
+- [x] GUT addon installed and configured
+- [x] Test directory structure created
+- [x] Test runner script functional
+- [x] Sample test runs successfully
+- [x] Documentation for writing tests created

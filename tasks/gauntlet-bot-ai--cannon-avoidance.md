@@ -1,12 +1,13 @@
 ---
 title: "Gauntlet: Bot AI — Sticky Avoidance & Pathfinding"
 id: "075"
-status: "in_progress"
+status: "todo"
+blocked_by: ["068", "082"]
 priority: 02
 sprint: alpha
 category: AI
 description: "Adapt Bot controllers to navigate the grid while avoiding sticky cells, candy bubbles, and telegraphed growth zones."
-modified: "2026-06-18"
+modified: "2026-06-23"
 ---
 
 # Gauntlet: Bot AI — Sticky Avoidance & Pathfinding

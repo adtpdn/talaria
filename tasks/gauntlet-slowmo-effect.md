@@ -8,7 +8,7 @@ category: FEATURE
 description: "Implement slow-motion effect at 1/4 speed for animations and velocity."
 assignee: "default"
 cron_job: "pending"
-modified: "2026-06-08"
+modified: "2026-06-25"
 ---
 
 # Gauntlet: Slow-Mo Effect (1/4 Speed)
@@ -37,3 +37,16 @@ Add slow-motion mode that reduces animation speed and physics velocity to 1/4 of
 - [ ] Apply `Engine.time_scale = 0.25` when active.
 - [ ] Reset to 1.0 on deactivation.
 - [ ] Add HUD indicator for slow-mo status.
+
+## Redesign Note (2026-06-25): per-player slow, not global time_scale
+The original global `Engine.time_scale = 0.25` slow-mo was triggered by Cleanser,
+which slowed **every** player and the sticky growth timers in multiplayer — one
+player's powerup penalized everyone. Per gameplay direction, the slow-feel is now
+the **sticky-tile penalty** and applies **per-player**:
+- Stepping on sticky → `apply_sticky_slow()` → `player.apply_slow_effect(2.0)`
+  (20% move speed for that player only). No global `Engine.time_scale`.
+- Cleanser no longer triggers slow-mo; it now just **removes** the sticky tile.
+- The global `trigger_slowmo()` / `Engine.time_scale` path remains in
+  `gauntlet_manager.gd` but is unused (available for a future shared cinematic).
+
+See [[gauntlet-sticky-cell-system]] (#068) for the sticky-entry behavior.

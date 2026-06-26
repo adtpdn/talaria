@@ -1,12 +1,13 @@
 ---
 title: "Gauntlet: Sticky Cell System (v2)"
 id: "068"
-status: "in_progress"
+status: "done"
+blocked_by: ["066"]
 priority: 01
 sprint: alpha
 category: CORE
 description: "Implement the 'sticky candy' logic that blocks movement, traps players, and changes the arena layout. Updated for ground growth model."
-modified: "2026-06-18"
+modified: "2026-06-25"
 ---
 
 # Gauntlet: Sticky Cell System (v2)
@@ -57,11 +58,36 @@ Before applying selected sticky cells, check that each active player still has:
 - Coverage reaches 70–75% by end of round
 
 ## Migration Checklist
-- [ ] Keep `TILE_STICKY = 17` and `TILE_TELEGRAPH = 18` definitions
-- [ ] Keep `sticky_cells` tracking dictionary
-- [ ] Keep `is_sticky_cell()`, `clear_sticky_cell()`, `_trap_player()` functions
-- [ ] Update `_check_all_players_trapped()` to run after each growth tick (not cannon volley)
-- [ ] Add `CLEANSED = 6` cell state to grid
-- [ ] Add path safety validation before applying growth tick selections
-- [ ] Update coverage target from 80% to 70–75%
-- [ ] Update all "Candy Cannon" references to "Candy Pump" in comments
+- [x] Keep `TILE_STICKY = 17` and `TILE_TELEGRAPH = 18` definitions
+- [x] Keep `sticky_cells` tracking dictionary
+- [x] Keep `is_sticky_cell()`, `clear_sticky_cell()`, `_trap_player()` functions
+- [x] Update `_check_all_players_trapped()` to run after each growth tick (not cannon volley) — runs in `sync_growth_apply`; now SLOWS players on fresh sticky instead of trapping
+- [x] Add `CLEANSED = 6` cell state to grid (CellState enum, value 5; 0-indexed)
+- [x] Add path safety validation before applying growth tick selections (`_apply_path_safety`, BFS reachability)
+- [x] Update coverage target from 80% to 70–75% (`COVERAGE_TARGET_MIN/MAX`, `coverage_ratio`, `is_coverage_reached`)
+- [x] Update all "Candy Cannon" references to "Candy Pump" in comments
+
+## Implementation Notes (2026-06-24)
+Added to `scripts/managers/gauntlet_manager.gd`:
+- `enum CellState { SAFE, TELEGRAPHED, STICKY, BUBBLE_GROWING, BLOCKED, CLEANSED }`
+- `cleansed_cells` dict + `CLEANSED_PROTECTION_TIME` (5s), decayed each server tick via `_tick_cleansed_cells()`
+- `cell_state(pos)`, `is_cleansed_cell()`, `mark_cleansed()`, `_is_boundary()`
+- Coverage: `playable_cell_count()` (315 on 20×20), `coverage_ratio()`, `is_coverage_reached()`
+- Path safety: `_is_cell_passable()`, `_reachable_safe_cells()` (BFS), `_player_has_safe_region()`, `_apply_path_safety()` (final-30s forced-trap window)
+- `clear_sticky_cell()` now marks the cell CLEANSED for temporary regrowth protection
+
+Tests: `tests/test_gauntlet_sticky_system.gd` — 31/31 passing (headless GUT). The `_apply_path_safety` wiring into the live growth loop lands with #067.
+
+## Sticky Entry Behavior Change (2026-06-25)
+Sticky entry now **slows** the player instead of hard-trapping them (decision:
+"always slow only", no final-30s freeze). This decouples the slow-feel from the
+global `Engine.time_scale` slow-mo, which was unfair in multiplayer (one player's
+Cleanser slowed everyone). See [[gauntlet-slowmo-effect]] (#078).
+- `apply_sticky_slow(player)` → per-player `player.apply_slow_effect(STICKY_SLOW_DURATION=2.0)`
+  (20% move speed via `movement_manager.set_speed_multiplier(0.2)`).
+- `player_movement_manager.gd`: stepping into / being pushed into sticky calls
+  `apply_sticky_slow` (not `_trap_player`); the `trapped_players` movement-block
+  was removed so slowed players can still struggle free.
+- Cleanser still **removes** the sticky cell on contact (`clear_sticky_cell`) and
+  is immune to the slow. `_trap_player` / `trapped_players` kept as legacy, unused
+  for sticky.
