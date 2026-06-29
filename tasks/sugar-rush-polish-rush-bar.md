@@ -1,7 +1,8 @@
 ---
 title: "Sugar Rush: Polish — Rush Bar + ×N Badge"
 id: "120"
-status: "todo"
+status: "halt"
+halt_reason: "need confirmation"
 priority: 03
 sprint: alpha
 category: POLISH

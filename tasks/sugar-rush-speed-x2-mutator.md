@@ -1,7 +1,8 @@
 ---
 title: "Sugar Rush: Speed ×2 Mutator"
 id: "122"
-status: "todo"
+status: "halt"
+halt_reason: "need confirmation"
 priority: 02
 sprint: alpha
 category: CORE

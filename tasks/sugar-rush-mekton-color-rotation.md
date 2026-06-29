@@ -1,7 +1,8 @@
 ---
 title: "Sugar Rush: Mekton Color Rotation Telegraph"
 id: "114"
-status: "todo"
+status: "halt"
+halt_reason: "need confirmation"
 priority: 02
 sprint: alpha
 category: CORE

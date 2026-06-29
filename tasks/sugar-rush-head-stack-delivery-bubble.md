@@ -1,7 +1,8 @@
 ---
 title: "Sugar Rush: Head-Stack Delivery Bubble"
 id: "124"
-status: "todo"
+status: "halt"
+halt_reason: "need confirmation"
 priority: 02
 sprint: alpha
 category: VFX

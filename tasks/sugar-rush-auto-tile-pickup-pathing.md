@@ -1,7 +1,8 @@
 ---
 title: "Sugar Rush: Auto Tile Pickup Pathing"
 id: "125"
-status: "todo"
+status: "halt"
+halt_reason: "need confirmation"
 priority: 02
 sprint: alpha
 category: AI

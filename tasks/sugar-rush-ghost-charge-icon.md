@@ -1,7 +1,8 @@
 ---
 title: "Sugar Rush: Ghost Charge Icon"
 id: "121"
-status: "todo"
+status: "halt"
+halt_reason: "need confirmation"
 priority: 03
 sprint: alpha
 category: POLISH

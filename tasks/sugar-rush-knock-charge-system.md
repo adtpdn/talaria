@@ -1,7 +1,8 @@
 ---
 title: "Sugar Rush: Knock Charge System"
 id: "116"
-status: "todo"
+status: "halt"
+halt_reason: "need confirmation"
 priority: 01
 sprint: alpha
 category: CORE

@@ -1,7 +1,8 @@
 ---
 title: "Sugar Rush: Single-Color Blueprint Auto-Pickup"
 id: "119"
-status: "todo"
+status: "halt"
+halt_reason: "need confirmation"
 priority: 01
 sprint: alpha
 category: CORE

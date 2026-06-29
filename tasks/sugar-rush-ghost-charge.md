@@ -1,7 +1,8 @@
 ---
 title: "Sugar Rush: Ghost Charge (4 s)"
 id: "117"
-status: "todo"
+status: "halt"
+halt_reason: "need confirmation"
 priority: 01
 sprint: alpha
 category: CORE

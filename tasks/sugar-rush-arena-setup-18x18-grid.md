@@ -1,7 +1,8 @@
 ---
 title: "Sugar Rush: Arena Setup 18×18 Grid"
 id: "112"
-status: "todo"
+status: "halt"
+halt_reason: "need confirmation"
 priority: 01
 sprint: alpha
 category: CORE

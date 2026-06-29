@@ -1,7 +1,8 @@
 ---
 title: "Sugar Rush: Spawn Gear — 5 Knock OR 5 Ghost"
 id: "130"
-status: "todo"
+status: "halt"
+halt_reason: "need confirmation"
 priority: 01
 sprint: alpha
 category: CORE

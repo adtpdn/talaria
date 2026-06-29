@@ -1,7 +1,8 @@
 ---
 title: "Sugar Rush: Candy Stack Growth Tick"
 id: "113"
-status: "todo"
+status: "halt"
+halt_reason: "need confirmation"
 priority: 01
 sprint: alpha
 category: CORE

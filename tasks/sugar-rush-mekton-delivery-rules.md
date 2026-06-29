@@ -1,7 +1,8 @@
 ---
 title: "Sugar Rush: Mekton Delivery Rules"
 id: "128"
-status: "todo"
+status: "halt"
+halt_reason: "need confirmation"
 priority: 01
 sprint: alpha
 category: CORE

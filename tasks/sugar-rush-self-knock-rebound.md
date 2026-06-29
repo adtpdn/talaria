@@ -1,7 +1,8 @@
 ---
 title: "Sugar Rush: Self-Knock Rebound"
 id: "131"
-status: "todo"
+status: "halt"
+halt_reason: "need confirmation"
 priority: 02
 sprint: alpha
 category: CORE

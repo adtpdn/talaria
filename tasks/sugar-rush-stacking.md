@@ -1,7 +1,8 @@
 ---
 title: "Sugar Rush: Sugar Rush Stacking (Replaces Phase Escalation)"
 id: "115"
-status: "todo"
+status: "halt"
+halt_reason: "need confirmation"
 priority: 02
 sprint: alpha
 category: CORE

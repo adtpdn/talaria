@@ -1,7 +1,8 @@
 ---
 title: "Sugar Rush: Mekton Cheerleaders (TBD)"
 id: "126"
-status: "todo"
+status: "halt"
+halt_reason: "need confirmation"
 priority: 04
 sprint: alpha
 category: CORE

@@ -1,7 +1,8 @@
 ---
 title: "Sugar Rush: Bot AI for Candy Survival"
 id: "118"
-status: "todo"
+status: "halt"
+halt_reason: "need confirmation"
 priority: 02
 sprint: alpha
 category: AI

@@ -1,7 +1,8 @@
 ---
 title: "Sugar Rush: Mekton Bulls Sub-Mode Flag"
 id: "132"
-status: "todo"
+status: "halt"
+halt_reason: "need confirmation"
 priority: 02
 sprint: alpha
 category: CORE

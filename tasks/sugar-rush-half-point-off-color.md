@@ -1,7 +1,8 @@
 ---
 title: "Sugar Rush: Half-Point Penalty for Off-Color Finish"
 id: "129"
-status: "todo"
+status: "halt"
+halt_reason: "need confirmation"
 priority: 03
 sprint: alpha
 category: CORE

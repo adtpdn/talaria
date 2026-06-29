@@ -1,7 +1,8 @@
 ---
 title: "Sugar Rush: Head Stack Multiplier + ×N Badge UI"
 id: "127"
-status: "todo"
+status: "halt"
+halt_reason: "need confirmation"
 priority: 02
 sprint: alpha
 category: UI
