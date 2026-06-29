@@ -23,7 +23,7 @@
   {
     "slug": "gamemode-candy-survival",
     "title": "GameModes",
-    "description": "Talaria game-mode catalog. Gauntlet (shipped, as Candy Pump Survival) plus the designed Candy Survival and Mekton Bulls modes.",
+    "description": "Talaria game-mode catalog. Gauntlet (shipped, as Candy Pump Survival) → migrating to Sugar Rush, plus the designed Mekton Bulls sub-mode.",
     "modified": "2026-06-29",
     "file": "gamemode-candy-survival.md"
   }

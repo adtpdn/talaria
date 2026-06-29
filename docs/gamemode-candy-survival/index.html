@@ -4,7 +4,7 @@
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>GameModes · Talaria</title>
-        <meta name="description" content="Talaria game-mode catalog. Gauntlet (shipped, as Candy Pump Survival) plus the designed Candy Survival and Mekton Bulls modes." />
+        <meta name="description" content="Talaria game-mode catalog. Gauntlet (shipped, as Candy Pump Survival) → migrating to Sugar Rush, plus the designed Mekton Bulls sub-mode." />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
         <link
@@ -410,62 +410,67 @@
 
         <main>
             <article class="markdown-body"><h1>GameModes</h1>
-<p>Talaria&#x27;s current shipped mode family is <strong>Gauntlet</strong> (displayed in the lobby as <strong>&amp;quot;Candy Pump Survival&amp;quot;</strong>). Sitting alongside it are two <strong>designed but not implemented</strong> modes — <strong>Candy Survival</strong> and <strong>Mekton Bulls</strong> — which together form the <em>Speed / Points / Knock / Survive</em> design pillar for the next iteration.</p>
-<p>Every implementation reference below is grounded in the live Godot project at <code>/home/beng/Godot/Projects/tekton-enet</code>, against the task list at <code>/home/beng/Documents/github/talaria</code>.</p>
+<p>Talaria&#x27;s current shipped mode family is <strong>Gauntlet</strong> (displayed in the lobby as <strong>&amp;quot;Candy Pump Survival&amp;quot;</strong>). The next iteration renames it to <strong>Sugar Rush</strong> — same enum (<code>GameMode.GAUNTLET = 3</code>), same manager (<code>scripts/managers/gauntlet_manager.gd</code>), but with the <em>Speed / Points / Knock / Survive</em> design pillar from the page below baked in.</p>
+<p>A second sub-mode, <strong>Mekton Bulls</strong>, sits on top of Sugar Rush with a shrinking arena and placement scoring.</p>
+<p>Every implementation reference is grounded in the live Godot project at <code>/home/beng/Godot/Projects/tekton-enet</code>, against the task list at <code>/home/beng/Documents/github/talaria</code>.</p>
 <hr>
-<h2>Gauntlet (Shipped — <code>GameMode.GAUNTLET</code>)</h2>
-<p>The currently playable mode. Wired through <code>scripts/game_mode.gd</code> (the <code>GameMode.GAUNTLET</code> enum, value <code>3</code>, string <code>&amp;quot;Candy Pump Survival&amp;quot;</code>), orchestrated by <code>scripts/managers/gauntlet_manager.gd</code>, configured in <code>scripts/managers/lobby_manager.gd</code> (<code>gauntlet_round_duration</code>).</p>
-<h3>Live Constants (from source)</h3>
-<table><thead><tr><th>Constant</th><th>Value</th><th>Source</th></tr></thead><tbody>
-<tr><td>Arena size</td><td><strong>20 × 20</strong></td><td><code>gauntlet_manager.gd</code> <code>ARENA_COLUMNS=20</code>, <code>ARENA_ROWS=20</code></td></tr>
-<tr><td>Round duration</td><td><strong>180 s</strong> (host-configurable)</td><td><code>lobby_manager.gd</code> <code>gauntlet_round_duration=180</code></td></tr>
-<tr><td>NPC center</td><td><code>(9, 9)</code> (center of 3×3)</td><td><code>gauntlet_manager.gd</code> <code>NPC_CENTER</code></td></tr>
-<tr><td>Telegraph window</td><td><strong>1.0 s</strong> passable before sticky</td><td><code>gauntlet_manager.gd</code> <code>telegraph_duration=1.0</code></td></tr>
-<tr><td>Slow-mo duration</td><td><strong>4.0 s</strong> at ¼ speed</td><td><code>gauntlet_manager.gd</code> <code>slowmo_duration=4.0</code>, <code>trigger_slowmo()</code></td></tr>
-<tr><td>Phase 3 start</td><td>when <strong>120 s</strong> remain (Survival Endgame)</td><td><code>gauntlet_manager.gd</code> <code>PHASE_3_START=120.0</code></td></tr>
-<tr><td>Phase enum</td><td><code>OPEN_ARENA → ROUTE_PRESSURE → SURVIVAL_ENDGAME</code></td><td><code>gauntlet_manager.gd</code> <code>enum Phase</code></td></tr>
+<h2>Sugar Rush (Next iteration — replaces Gauntlet)</h2>
+<blockquote><p>Sugar Rush is a Gauntlet game mode. 2-minute-or-less matches built on Speed, Points, Knock, and Survive.</p></blockquote>
+<h3>Live Constants (from <code>tekton-enet/scripts/</code>)</h3>
+<table><thead><tr><th>Constant</th><th>Current (Gauntlet)</th><th>Target (Sugar Rush)</th><th>Source</th></tr></thead><tbody>
+<tr><td>Arena size</td><td><strong>20 × 20</strong></td><td><strong>18 × 18</strong></td><td><code>gauntlet_manager.gd</code> <code>ARENA_COLUMNS=20</code>, <code>ARENA_ROWS=20</code></td></tr>
+<tr><td>Round duration</td><td><strong>180 s</strong> (host-configurable)</td><td><strong>≤ 120 s</strong></td><td><code>lobby_manager.gd</code> <code>gauntlet_round_duration=180</code></td></tr>
+<tr><td>NPC center</td><td><code>(9, 9)</code> (center of 3×3)</td><td>recompute for 18²</td><td><code>gauntlet_manager.gd</code> <code>NPC_CENTER</code></td></tr>
+<tr><td>Telegraph window</td><td><strong>1.0 s</strong> passable → sticky</td><td><strong>n/a</strong> — replaced by Mekton color rotation</td><td><code>gauntlet_manager.gd</code> <code>telegraph_duration</code></td></tr>
+<tr><td>Slow-mo duration</td><td><strong>4.0 s</strong> at ¼ speed</td><td><strong>Sugar Rush = ×2 speed, 2 s base</strong></td><td><code>gauntlet_manager.gd</code> <code>slowmo_duration=4.0</code></td></tr>
+<tr><td>Phase enum</td><td><code>OPEN_ARENA → ROUTE_PRESSURE → SURVIVAL_ENDGAME</code></td><td><code>OPEN_ARENA → SUGAR_RUSH × STACK → SURVIVAL_ENDGAME</code></td><td><code>gauntlet_manager.gd</code> <code>enum Phase</code></td></tr>
 </tbody></table>
-<h3>Task Coverage</h3>
-<table><thead><tr><th>#</th><th>Status</th><th>Task</th></tr></thead><tbody>
-<tr><td><a href="https://dev.klud.top/talaria/">065</a></td><td>done</td><td>Gauntlet: Game Mode Registration (<code>GameMode.GAUNTLET</code>, <code>LobbyManager</code>, <code>GauntletManager</code>)</td></tr>
-<tr><td><a href="https://dev.klud.top/talaria/">066</a></td><td>done</td><td>Gauntlet: Arena Setup (20×20 Grid with Layers) — matches <code>ARENA_COLUMNS</code>/<code>ARENA_ROWS</code></td></tr>
-<tr><td><a href="https://dev.klud.top/talaria/">067</a></td><td>done</td><td>Gauntlet: Growth Tick System — <code>gauntlet_manager._process_growth_tick()</code>, <code>_cells_this_tick()</code></td></tr>
-<tr><td><a href="https://dev.klud.top/talaria/">068</a></td><td>done</td><td>Gauntlet: Sticky Cell System — <code>is_sticky_cell()</code>, <code>clear_sticky_cell()</code>, <code>apply_sticky_slow()</code></td></tr>
-<tr><td><a href="https://dev.klud.top/talaria/">069</a></td><td>done</td><td>Gauntlet: Telegraph VFX — <code>sync_growth_telegraph()</code>, <code>_spawn_telegraph_highlight()</code></td></tr>
-<tr><td><a href="https://dev.klud.top/talaria/">070</a></td><td>done</td><td>Gauntlet: Growth Phase Escalation — <code>cells_per_tick</code> dict + <code>_check_phase_transition()</code></td></tr>
-<tr><td><a href="https://dev.klud.top/talaria/">071</a></td><td>done</td><td>Gauntlet: Smack Mechanic — <code>has_smack_charged()</code>, <code>consume_smack()</code></td></tr>
-<tr><td><a href="https://dev.klud.top/talaria/">072</a></td><td>done</td><td>Gauntlet: Cleanser Power-Up — <code>_try_use_cleanser()</code>, <code>use_cleanser_cell()</code></td></tr>
-<tr><td><a href="https://dev.klud.top/talaria/">073</a></td><td>done</td><td>Gauntlet: Candidate Scoring — <code>_calculate_candidate_score()</code> + 7 layer scorers</td></tr>
-<tr><td><a href="https://dev.klud.top/talaria/">074</a></td><td>done</td><td>Gauntlet: Tile Spawning &amp; Mission System — <code>setup_mission_tiles()</code></td></tr>
-<tr><td><a href="https://dev.klud.top/talaria/">075</a></td><td>done</td><td>Gauntlet: Bot AI — Sticky Avoidance &amp; Pathfinding (<code>BotStrategicPlanner</code>)</td></tr>
-<tr><td><a href="https://dev.klud.top/talaria/">077</a></td><td>done</td><td>Gauntlet: Cleanser Icon Fix — <code>_generate_cleanser_icon()</code></td></tr>
-<tr><td><a href="https://dev.klud.top/talaria/">078</a></td><td>done</td><td>Gauntlet: Slow-Mo Effect (1/4 Speed) — <code>trigger_slowmo(duration=4.0)</code></td></tr>
-<tr><td><a href="https://dev.klud.top/talaria/">079</a></td><td>done</td><td>Gauntlet: Screenshake Follows Player — <code>screen_shake.gd</code></td></tr>
-<tr><td><a href="https://dev.klud.top/talaria/">080</a></td><td>done</td><td>Gauntlet: Disable Default Powerups Except Smack</td></tr>
-<tr><td><a href="https://dev.klud.top/talaria/">081</a></td><td>done</td><td>Gauntlet: Telegraph Floor Highlight — <code>_spawn_telegraph_highlight()</code></td></tr>
-<tr><td><a href="https://dev.klud.top/talaria/">082</a></td><td>done</td><td>Gauntlet: Candy Bubble System — <code>_try_spawn_bubble()</code>, <code>_explode_bubble()</code></td></tr>
-<tr><td><a href="https://dev.klud.top/talaria/">083</a></td><td>done</td><td>Gauntlet: Movement Buffer System — <code>_detect_movement_buffers()</code>, <code>_buffer_penalty_at()</code></td></tr>
-<tr><td><a href="https://dev.klud.top/talaria/">076</a></td><td>progress</td><td>Gauntlet: Polish — VFX, SFX, HUD &amp; Arena Scene (<code>_setup_hud()</code>, <code>_animate_phase_label()</code>)</td></tr>
+<h3>Migration Map — shipped Gauntlet → Sugar Rush</h3>
+<p>Each shipped Gauntlet task #065–#083 maps to one or more new Sugar Rush tasks (#111–#133). Old tasks stay <code>done</code>; new tasks carry the work.</p>
+<table><thead><tr><th>Old #</th><th>Shipped (Gauntlet)</th><th>New #</th><th>Sugar Rush replacement</th></tr></thead><tbody>
+<tr><td><a href="https://dev.klud.top/talaria/">065</a></td><td>Game Mode Registration (display string = &quot;Candy Pump Survival&quot;)</td><td><a href="#task-111">111</a></td><td>Sugar Rush Mode Registration + rename to &quot;Sugar Rush&quot;</td></tr>
+<tr><td><a href="https://dev.klud.top/talaria/">066</a></td><td>Arena Setup 20 × 20</td><td><a href="#task-112">112</a></td><td>Arena Setup 18 × 18</td></tr>
+<tr><td><a href="https://dev.klud.top/talaria/">067</a></td><td>Growth Tick (<code>_process_growth_tick</code>)</td><td><a href="#task-113">113</a></td><td>Candy Stack Growth Tick (<code>_process_candy_tick</code>)</td></tr>
+<tr><td><a href="https://dev.klud.top/talaria/">068</a></td><td>Sticky Cell System</td><td>keep</td><td>Sugar Rush keeps sticky on the floor (no change)</td></tr>
+<tr><td><a href="https://dev.klud.top/talaria/">069</a></td><td>Telegraph VFX (<code>sync_growth_telegraph</code>)</td><td><a href="#task-114">114</a></td><td>Mekton Color Rotation Telegraph (<code>sync_mekton_color</code>)</td></tr>
+<tr><td><a href="https://dev.klud.top/talaria/">070</a></td><td>Growth Phase Escalation</td><td><a href="#task-115">115</a></td><td>Sugar Rush Stacking (<code>_check_sugar_rush_stack</code>)</td></tr>
+<tr><td><a href="https://dev.klud.top/talaria/">071</a></td><td>Smack Mechanic (<code>has_smack_charged</code>)</td><td><a href="#task-116">116</a></td><td>Knock Charge System (5 charges per spawn)</td></tr>
+<tr><td><a href="https://dev.klud.top/talaria/">072</a></td><td>Cleanser Power-Up</td><td><a href="#task-117">117</a></td><td>Ghost Charge (4 s, 5 charges, walk-through + immune)</td></tr>
+<tr><td><a href="https://dev.klud.top/talaria/">073</a></td><td>Candidate Scoring</td><td><a href="#task-118">118</a></td><td>Bot AI for Candy Survival (candy-stack aware)</td></tr>
+<tr><td><a href="https://dev.klud.top/talaria/">074</a></td><td>Tile Spawning &amp; Mission</td><td><a href="#task-119">119</a></td><td>Single-Color Blueprint Auto-Pickup</td></tr>
+<tr><td><a href="https://dev.klud.top/talaria/">075</a></td><td>Bot AI Sticky Avoidance</td><td>(folded into #118)</td><td>—</td></tr>
+<tr><td><a href="https://dev.klud.top/talaria/">076</a></td><td>Polish — VFX, SFX, HUD, Arena Scene</td><td><a href="#task-120">120</a></td><td>Sugar Rush Polish — Rush Bar + ×N Badge</td></tr>
+<tr><td><a href="https://dev.klud.top/talaria/">077</a></td><td>Cleanser Icon</td><td><a href="#task-121">121</a></td><td>Ghost Charge Icon</td></tr>
+<tr><td><a href="https://dev.klud.top/talaria/">078</a></td><td>Slow-Mo (¼ speed, 4 s)</td><td><a href="#task-122">122</a></td><td>Sugar Rush Speed ×2 (2 s base + 1.2× per candy)</td></tr>
+<tr><td><a href="https://dev.klud.top/talaria/">079</a></td><td>Screenshake Follows Player</td><td>keep</td><td>—</td></tr>
+<tr><td><a href="https://dev.klud.top/talaria/">080</a></td><td>Disable Default Powerups Except Smack</td><td><a href="#task-130">130</a></td><td>Spawn gear: 5 Knock OR 5 Ghost</td></tr>
+<tr><td><a href="https://dev.klud.top/talaria/">081</a></td><td>Telegraph Floor Highlight</td><td><a href="#task-123">123</a></td><td>Mekton Color Beacon (face-color highlight)</td></tr>
+<tr><td><a href="https://dev.klud.top/talaria/">082</a></td><td>Candy Bubble System</td><td><a href="#task-124">124</a></td><td>Head-stack delivery bubble (carry/transfer)</td></tr>
+<tr><td><a href="https://dev.klud.top/talaria/">083</a></td><td>Movement Buffer System</td><td><a href="#task-125">125</a></td><td>Auto Tile Pickup Pathing</td></tr>
+<tr><td>—</td><td>—</td><td><a href="#task-126">126</a></td><td>Mekton Cheerleaders (TBD)</td></tr>
+<tr><td>—</td><td>—</td><td><a href="#task-127">127</a></td><td>Head Stack Multiplier + ×N Badge UI</td></tr>
+<tr><td>—</td><td>—</td><td><a href="#task-128">128</a></td><td>Mekton Delivery Rules (matching-color only)</td></tr>
+<tr><td>—</td><td>—</td><td><a href="#task-129">129</a></td><td>Half-Point Penalty for Off-Color Finish</td></tr>
+<tr><td>—</td><td>—</td><td><a href="#task-131">131</a></td><td>Self-Knock Rebound (no-candy target)</td></tr>
+<tr><td>—</td><td>—</td><td><a href="#task-132">132</a></td><td>Mekton Bulls Sub-Mode Flag</td></tr>
+<tr><td>—</td><td>—</td><td><a href="#task-133">133</a></td><td>Mekton Bulls Shrinking Arena + Water Flood</td></tr>
 </tbody></table>
-<p><strong>18 done / 1 in progress.</strong> Grep confirms <code>sugar_rush</code>, <code>mekton_bull</code>, <code>shrinking_arena</code>, <code>candy_survival</code> return <strong>0 hits</strong> anywhere in <code>tekton-enet/scripts/</code> — every designed mode on this page is unimplemented.</p>
-<hr>
-<h2>Candy Survival (Designed)</h2>
-<blockquote><p><strong>Candy Survival is a Gauntlet game mode.</strong> 2-minute-or-less matches built on Speed, Points, Knock, and Survive.</p></blockquote>
-<p>Free-for-all variant. Everyone runs, everyone steals, the Mekton sits in the middle as a scoring target. <strong>Not implemented</strong> — no function in <code>gauntlet_manager.gd</code> references candies, head-stacks, or Sugar Rush.</p>
-<h3>Arena</h3>
+<p>Grep confirms <code>sugar_rush</code>, <code>mekton_bull</code>, <code>shrinking_arena</code> return <strong>0 hits</strong> anywhere in <code>tekton-enet/scripts/</code> — every new task is unimplemented.</p>
+<h3>Sugar Rush design spec</h3>
+<h4>Arena</h4>
 <ul>
 <li><strong>18 × 18</strong> grid (vs. the 20 × 20 shipped in <code>gauntlet_manager.gd</code>).
 </li>
 <li>Blueprints are <strong>single-color focused</strong>.
 </li>
-<li><strong>Automatic tile pickup</strong> — no input needed; walking over a matching
- tile counts it.
+<li><strong>Automatic tile pickup</strong> — no input needed; walking over a matching tile
+ counts it.
 </li>
 <li>If your blueprint&#x27;s color runs out, finish it with any other color, but
  you only earn <strong>½ points</strong> for that blueprint.
 </li>
 </ul>
-<h3>Candies on Your Head</h3>
+<h4>Candies on Your Head</h4>
 <ul>
 <li>Finishing a blueprint drops a candy on your head in the matching color.
 </li>
@@ -478,7 +483,7 @@
  sprite so opponents see the threat.
 </li>
 </ul>
-<h3>Mekton Delivery</h3>
+<h4>Mekton Delivery</h4>
 <ul>
 <li>The Mekton&#x27;s face changes color on a timer.
 </li>
@@ -490,7 +495,7 @@
 <li>Mismatched candies stay on your head (no penalty, no delivery).
 </li>
 </ul>
-<h3>Sugar Rush Mutator</h3>
+<h4>Sugar Rush Mutator</h4>
 <p>Feeding a candy to the Mekton triggers <strong>Sugar Rush</strong>:</p>
 <table><thead><tr><th>Parameter</th><th>Value</th></tr></thead><tbody>
 <tr><td>Base rush time</td><td>2 s</td></tr>
@@ -500,7 +505,7 @@
 <tr><td>Visual</td><td>Rush bar turns red while active</td></tr>
 <tr><td>Stacking limit</td><td><strong>TBD</strong></td></tr>
 </tbody></table>
-<h3>Knock &amp; Ghost Charges</h3>
+<h4>Knock &amp; Ghost Charges</h4>
 <p>Every player spawns with <strong>5 knock charges OR 5 ghost charges</strong> (your pick).</p>
 <ul>
 <li><strong>Knock</strong> — shove another player. If they carry candies, **you steal them
@@ -512,13 +517,13 @@
  <strong>you get knocked instead</strong>.
 </li>
 </ul>
-<h3>Sticky Floor</h3>
+<h4>Sticky Floor</h4>
 <p>Sticky material is <strong>pure collision</strong> — it acts like a wall. Standing in it is the same as standing on a hard tile: trapped, no pickup, no movement.</p>
-<h3>Mekton Cheerleaders (TBD)</h3>
+<h4>Mekton Cheerleaders (TBD)</h4>
 <p>Cheerleaders stand <strong>outside</strong> the board. Each player picks one during lobby. They activate only when you are <strong>low on the leaderboard</strong>. Per-cheerleader buffs are still TBD.</p>
 <hr>
-<h2>Mekton Bulls (Designed)</h2>
-<blockquote><p><strong>Mekton Bulls is a Gauntlet game mode.</strong> 2-minute-or-less matches built on placement scoring inside a shrinking arena.</p></blockquote>
+<h2>Mekton Bulls (Designed sub-mode)</h2>
+<blockquote><p>Mekton Bulls is a Gauntlet game mode. 2-minute-or-less matches built on placement scoring inside a shrinking arena.</p></blockquote>
 <p>A second designed mode. Mektons are no longer a fixed target — they are roaming bulls, and survival is placement-scored. <strong>Not implemented</strong> — no shrinking-arena code exists in <code>tekton-enet/scripts/</code>.</p>
 <h3>Arena &amp; Phases</h3>
 <p>The board <strong>shrinks every phase</strong>. A bull standing on the outside of the arena <strong>floods the outermost ring with water</strong> — instant elimination.</p>
@@ -553,77 +558,127 @@
 <tr><td>Middle</td><td>Linear between min and max</td></tr>
 </tbody></table>
 <hr>
-<h2>What&#x27;s Implemented vs. Designed</h2>
-<p>A direct comparison of what is in <code>tekton-enet/scripts/</code> today vs. what the two designed modes would require.</p>
-<h3>Already in <code>gauntlet_manager.gd</code> (referenced by task #)</h3>
+<h2>Migration Task List</h2>
+<p>Each row is a tracked task under <code>tasks/</code>. Open one for full acceptance criteria.</p>
+<h3>Mode &amp; Arena</h3>
 <ul>
-<li><strong>Mode registration, arena, orchestrator</strong> — #065, #066 (<code>GameMode</code>,
- <code>GauntletManager</code>, <code>LobbyManager</code>).
+<li>&lt;a id=&quot;task-111&quot;&gt;&lt;/a&gt;<strong>#111 Sugar Rush Mode Registration</strong> — replace
+ the <code>&amp;quot;Candy Pump Survival&amp;quot;</code> display string with <code>&amp;quot;Sugar Rush&amp;quot;</code> and
+ document the new mode identity. <code>supersedes_part_of(#065)</code>.
 </li>
-<li><strong>Growth hazard</strong> (sticky cells, telegraph, growth tick, phase escalation)
- — #067, #068, #069, #070, #081 (<code>_process_growth_tick</code>, <code>is_sticky_cell</code>,
- <code>sync_growth_telegraph</code>, <code>_check_phase_transition</code>).
-</li>
-<li><strong>Mission tiles &amp;amp; tile spawning</strong> — #074 (<code>setup_mission_tiles</code>).
-</li>
-<li><strong>AI (candidate scoring, sticky avoidance, movement buffer)</strong> — #073,
- #075, #083 (<code>_calculate_candidate_score</code>, <code>BotStrategicPlanner</code>,
- <code>_detect_movement_buffers</code>).
-</li>
-<li><strong>Smack knockback</strong> (re-usable as the &quot;Knock&quot; charge) — #071
- (<code>has_smack_charged</code>, <code>consume_smack</code>).
-</li>
-<li><strong>Cleanser power-up + icon</strong> — #072, #077 (<code>_try_use_cleanser</code>,
- <code>_generate_cleanser_icon</code>).
-</li>
-<li><strong>Feedback</strong> (slow-mo, screenshake) — #078, #079 (<code>trigger_slowmo</code>,
- <code>screen_shake.gd</code>).
-</li>
-<li><strong>Extras</strong> (candy bubble, disable default powerups) — #080, #082
- (<code>_try_spawn_bubble</code>, <code>_explode_bubble</code>).
-</li>
-<li><strong>Polish pass</strong> — #076 (<code>_setup_hud</code>, <code>_animate_phase_label</code>).
+<li>&lt;a id=&quot;task-112&quot;&gt;&lt;/a&gt;<strong>#112 Sugar Rush Arena Setup 18 × 18</strong> — change
+ <code>ARENA_COLUMNS</code>, <code>ARENA_ROWS</code>, <code>NPC_CENTER</code>, and the boundary loop.
+ <code>supersedes_part_of(#066)</code>.
 </li>
 </ul>
-<h3>New for Candy Survival (not in source)</h3>
+<h3>Tick &amp; Phases</h3>
 <ul>
-<li><strong>18 × 18 arena</strong> (would need to override <code>ARENA_COLUMNS=20</code> /
- <code>ARENA_ROWS=20</code>).
+<li>&lt;a id=&quot;task-113&quot;&gt;&lt;/a&gt;<strong>#113 Candy Stack Growth Tick</strong> — replace
+ <code>_process_growth_tick()</code> with a per-second candy-stack tick that grows
+ the head stack when standing on a matching tile. <code>supersedes(#067)</code>.
 </li>
-<li><strong>Candy stack on head</strong> with per-second multiplier + visible <code>×N</code> badge.
-</li>
-<li><strong>Mekton color rotation</strong> and matching-color delivery rules.
-</li>
-<li><strong>Sugar Rush mutator</strong> (×1.2 per candy, ×2 game-speed, red bar, stacking
- cap TBD).
-</li>
-<li><strong>Spawn gear</strong>: 5 knock charges OR 5 ghost charges (4 s).
-</li>
-<li><strong>Self-knock rebound</strong> for stealing from a candy-less player.
-</li>
-<li><strong>Mekton Cheerleaders</strong> outside the board, low-leaderboard activation
- (TBD).
-</li>
-<li><strong>&lt;code&gt;/2&lt;/code&gt; point penalty</strong> for finishing a blueprint with the wrong color.
+<li>&lt;a id=&quot;task-115&quot;&gt;&lt;/a&gt;<strong>#115 Sugar Rush Stacking</strong> — replace growth-phase
+ escalation with rush-stacking logic. <code>supersedes(#070)</code>.
 </li>
 </ul>
-<h3>New for Mekton Bulls (not in source)</h3>
+<h3>Telegraph → Mekton Color</h3>
 <ul>
-<li><strong>Shrinking arena</strong> (20 → 19 → 18 → 17) with <strong>water-flood outer ring</strong>.
+<li>&lt;a id=&quot;task-114&quot;&gt;&lt;/a&gt;<strong>#114 Mekton Color Rotation Telegraph</strong> — replace
+ telegraph VFX with face-color rotation. <code>supersedes(#069)</code>.
 </li>
-<li><strong>Big Mektons</strong> as roaming bulls (separate from the stationary delivery
- Mekton).
-</li>
-<li><strong>3 × 3 blueprints</strong> (vs. Candy Survival&#x27;s 1-color focused).
-</li>
-<li><strong>1 power per blueprint</strong>: Freeze or Knock.
-</li>
-<li><strong>Placement-scored</strong> static point system (replaces the per-second
- trickle).
+<li>&lt;a id=&quot;task-123&quot;&gt;&lt;/a&gt;<strong>#123 Mekton Color Beacon</strong> — replace floor
+ telegraph highlight with a Mekton-face color beacon. <code>supersedes(#081)</code>.
 </li>
 </ul>
-<h3>Duration callout</h3>
-<p>The shipped default is <strong>180 s</strong> (<code>gauntlet_round_duration</code>), but the designed modes target <strong>≤ 120 s</strong>. The host can lower the timer today via <code>LobbyManager.set_gauntlet_round_duration()</code>; no code change needed for the shorter cap, just a lobby preset.</p></article>
+<h3>Knock / Ghost / Spawn Gear</h3>
+<ul>
+<li>&lt;a id=&quot;task-116&quot;&gt;&lt;/a&gt;<strong>#116 Knock Charge System</strong> — convert Smack into a
+ 5-charge spawn gear that steals head-stack candies. <code>supersedes(#071)</code>.
+</li>
+<li>&lt;a id=&quot;task-117&quot;&gt;&lt;/a&gt;<strong>#117 Ghost Charge (4 s)</strong> — replace Cleanser with a
+ 5-charge, 4-second pass-through immunity. <code>supersedes(#072)</code>.
+</li>
+<li>&lt;a id=&quot;task-121&quot;&gt;&lt;/a&gt;<strong>#121 Ghost Charge Icon</strong> — replace Cleanser icon
+ with the Ghost Charge icon. <code>supersedes(#077)</code>.
+</li>
+<li>&lt;a id=&quot;task-130&quot;&gt;&lt;/a&gt;<strong>#130 Spawn Gear: 5 Knock OR 5 Ghost</strong> — give
+ each player exactly one of the two gears on spawn. <code>supersedes(#080)</code>.
+</li>
+<li>&lt;a id=&quot;task-131&quot;&gt;&lt;/a&gt;<strong>#131 Self-Knock Rebound</strong> — knocking a player with
+ no head-stack bounces the knock back at the attacker. new feature.
+</li>
+</ul>
+<h3>Bot AI &amp; Pathing</h3>
+<ul>
+<li>&lt;a id=&quot;task-118&quot;&gt;&lt;/a&gt;<strong>#118 Bot AI for Candy Survival</strong> — bot
+ pathfinding that prefers candy-rich tiles, avoids dangerous players,
+ and times deliveries to Mekton color. <code>supersedes(#073, #075)</code>.
+</li>
+<li>&lt;a id=&quot;task-119&quot;&gt;&lt;/a&gt;<strong>#119 Single-Color Blueprint Auto-Pickup</strong> —
+ rework mission tiles into single-color blueprints with automatic pickup.
+ <code>supersedes(#074)</code>.
+</li>
+<li>&lt;a id=&quot;task-125&quot;&gt;&lt;/a&gt;<strong>#125 Auto Tile Pickup Pathing</strong> — replace
+ movement-buffer penalties with an auto-pickup-aware path cost.
+ <code>supersedes(#083)</code>.
+</li>
+</ul>
+<h3>Head Stack &amp; Delivery</h3>
+<ul>
+<li>&lt;a id=&quot;task-127&quot;&gt;&lt;/a&gt;<strong>#127 Head Stack Multiplier + ×N Badge UI</strong> —
+ render the running <code>×N</code> multiplier next to the Mekton head sprite.
+ new feature.
+</li>
+<li>&lt;a id=&quot;task-128&quot;&gt;&lt;/a&gt;<strong>#128 Mekton Delivery Rules</strong> — only matching-color
+ candies deliver; mismatches stay on the head. new feature.
+</li>
+<li>&lt;a id=&quot;task-129&quot;&gt;&lt;/a&gt;<strong>#129 Half-Point Penalty for Off-Color Finish</strong> —
+ award ½ points when a blueprint is finished with a non-matching color.
+ new feature.
+</li>
+<li>&lt;a id=&quot;task-124&quot;&gt;&lt;/a&gt;<strong>#124 Head-Stack Delivery Bubble</strong> — convert the
+ candy-bubble spawner into a delivery-triggered VFX/SFX burst.
+ <code>supersedes_part_of(#082)</code>.
+</li>
+</ul>
+<h3>Mutator &amp; Feedback</h3>
+<ul>
+<li>&lt;a id=&quot;task-122&quot;&gt;&lt;/a&gt;<strong>#122 Sugar Rush Speed ×2</strong> — replace slow-mo
+ (¼ speed, 4 s) with Sugar Rush (×2 speed, 2 s base × 1.2 per candy).
+ <code>supersedes(#078)</code>.
+</li>
+<li>&lt;a id=&quot;task-120&quot;&gt;&lt;/a&gt;<strong>#120 Sugar Rush Polish — Rush Bar + ×N Badge</strong> —
+ fold the remaining polish work onto Sugar Rush visuals.
+ <code>supersedes(#076)</code>.
+</li>
+</ul>
+<h3>Cheerleaders</h3>
+<ul>
+<li>&lt;a id=&quot;task-126&quot;&gt;&lt;/a&gt;<strong>#126 Mekton Cheerleaders (TBD)</strong> — design
+ per-cheerleader buffs and the low-leaderboard activation hook.
+ new feature (TBD).
+</li>
+</ul>
+<h3>Mekton Bulls</h3>
+<ul>
+<li>&lt;a id=&quot;task-132&quot;&gt;&lt;/a&gt;<strong>#132 Mekton Bulls Sub-Mode Flag</strong> — register
+ Mekton Bulls as a sub-mode flag on <code>GameMode.GAUNTLET</code>.
+ new feature.
+</li>
+<li>&lt;a id=&quot;task-133&quot;&gt;&lt;/a&gt;<strong>#133 Mekton Bulls Shrinking Arena + Water Flood</strong>
+ — implement phase board shrinks and outer-ring water elimination.
+ new feature.
+</li>
+</ul>
+<hr>
+<h2>Untouched Gauntlet Tasks</h2>
+<p>These shipped tasks remain unchanged and continue to apply to Sugar Rush:</p>
+<ul>
+<li><a href="https://dev.klud.top/talaria/">068</a> — Sticky Cell System (kept on the floor).
+</li>
+<li><a href="https://dev.klud.top/talaria/">079</a> — Screenshake Follows Player (kept as-is).
+</li>
+</ul></article>
         </main>
 
         <footer class="page-footer">
