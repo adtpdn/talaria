@@ -284,7 +284,9 @@ def build_nav_links(current_slug: str) -> str:
     items: List[str] = []
     for p in pages:
         active = ' class="active"' if p["slug"] == current_slug else ""
-        href = f"{p['slug']}/"
+        # Pages live one directory deep (docs/<slug>/index.html), so every
+        # sibling link is "../<slug>/" and the board link is "../".
+        href = f"../{p['slug']}/"
         items.append(f'<a href="{href}"{active}>{esc(p["title"])}</a>')
     return "\n".join(items)
 
