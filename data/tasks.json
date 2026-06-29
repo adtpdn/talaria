@@ -234,6 +234,19 @@
     "file": "decouple-managers-with-observer-pattern.md"
   },
   {
+    "id": 146,
+    "title": "Fix Candy Cannon Projectile Cleanup on Rematch",
+    "status": "done",
+    "priority": 1,
+    "sprint": "alpha",
+    "category": "BUG",
+    "description": "Fix orphaned projectiles on candy cannon due to session timeout and rematch.",
+    "content": "### Goal / Risk\n\nWhen a game session times out or triggers a rematch, actively spawning projectiles from the candy cannon were orphaned on the scene tree root and persisted across the reload.\n\n### Solution\n\n1. Updated `scripts/controllers/candy_cannon_controller.gd` to parent spawned projectiles to the cannon itself rather than the root window (`get_tree().get_root().add_child`).\n2. Enabled `projectile.top_level = true` so the projectile still behaves with independent global transforms but remains part of the cannon's lifecycle hierarchy.\n3. This ensures that when the scene is reloaded/cleaned up during a rematch, the cannon and its active projectiles are cleanly destroyed together, preventing orphaned VFX.\n\n### Files Modified\n\n- `scripts/controllers/candy_cannon_controller.gd` - Changed projectile parenting to use `top_level = true` and `add_child(projectile)`.",
+    "halt_reason": null,
+    "modified": "2026-06-30",
+    "file": "fix-candy-cannon-projectile-cleanup-rematch.md"
+  },
+  {
     "id": 101,
     "title": "Fix Freemode Static Tekton Model and Powerup Logic",
     "status": "done",
