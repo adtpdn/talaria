@@ -4,7 +4,7 @@
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>GameModes · Talaria</title>
-        <meta name="description" content="Talaria game-mode catalog — Gauntlet (the implemented family) plus the designed Candy Survival and Mekton Bulls modes." />
+        <meta name="description" content="Talaria game-mode catalog. Gauntlet (shipped, as Candy Pump Survival) plus the designed Candy Survival and Mekton Bulls modes." />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
         <link
@@ -410,45 +410,56 @@
 
         <main>
             <article class="markdown-body"><h1>GameModes</h1>
-<p>This page catalogs Talaria&#x27;s game modes. The currently <strong>implemented</strong> mode family is <strong>Gauntlet</strong> (19/19 core tasks done, 1 polish task in progress). Sitting alongside it are two <strong>designed</strong> modes that have not shipped yet — <strong>Candy Survival</strong> and <strong>Mekton Bulls</strong> — which together form the <em>Speed / Points / Knock / Survive</em> design pillar for the next Gauntlet iteration.</p>
-<p>Matches are <strong>2 minutes or less</strong>, routed through the existing <code>gauntlet_round_duration</code> setting, and orchestrated by <code>GauntletManager</code> from <code>main.gd</code> (see task #065).</p>
+<p>Talaria&#x27;s current shipped mode family is <strong>Gauntlet</strong> (displayed in the lobby as <strong>&amp;quot;Candy Pump Survival&amp;quot;</strong>). Sitting alongside it are two <strong>designed but not implemented</strong> modes — <strong>Candy Survival</strong> and <strong>Mekton Bulls</strong> — which together form the <em>Speed / Points / Knock / Survive</em> design pillar for the next iteration.</p>
+<p>Every implementation reference below is grounded in the live Godot project at <code>/home/beng/Godot/Projects/tekton-enet</code>, against the task list at <code>/home/beng/Documents/github/talaria</code>.</p>
 <hr>
-<h2>Gauntlet (Implemented)</h2>
-<p>The shipped game mode. 20×20 arena, growth-tick sticky hazard system, mission tiles, Smack knockback, Cleanser power-up, slow-mo &amp; screenshake feedback.</p>
-<table><thead><tr><th>#</th><th>Status</th><th>Task</th></tr></thead><tbody>
-<tr><td><a href="https://dev.klud.top/talaria/">065</a></td><td>done</td><td>Gauntlet: Game Mode Registration</td></tr>
-<tr><td><a href="https://dev.klud.top/talaria/">066</a></td><td>done</td><td>Gauntlet: Arena Setup (20×20 Grid with Layers)</td></tr>
-<tr><td><a href="https://dev.klud.top/talaria/">067</a></td><td>done</td><td>Gauntlet: Growth Tick System (Replaces Cannon Volley)</td></tr>
-<tr><td><a href="https://dev.klud.top/talaria/">068</a></td><td>done</td><td>Gauntlet: Sticky Cell System (v2)</td></tr>
-<tr><td><a href="https://dev.klud.top/talaria/">069</a></td><td>done</td><td>Gauntlet: Telegraph VFX System (v2)</td></tr>
-<tr><td><a href="https://dev.klud.top/talaria/">070</a></td><td>done</td><td>Gauntlet: Growth Phase Escalation (Replaces Impact Sizes)</td></tr>
-<tr><td><a href="https://dev.klud.top/talaria/">071</a></td><td>done</td><td>Gauntlet: Smack Mechanic</td></tr>
-<tr><td><a href="https://dev.klud.top/talaria/">072</a></td><td>done</td><td>Gauntlet: Cleanser Power-Up</td></tr>
-<tr><td><a href="https://dev.klud.top/talaria/">073</a></td><td>done</td><td>Gauntlet: Candidate Scoring System (Replaces Targeting Intelligence)</td></tr>
-<tr><td><a href="https://dev.klud.top/talaria/">074</a></td><td>done</td><td>Gauntlet: Tile Spawning &amp; Mission System</td></tr>
-<tr><td><a href="https://dev.klud.top/talaria/">075</a></td><td>done</td><td>Gauntlet: Bot AI — Sticky Avoidance &amp; Pathfinding</td></tr>
-<tr><td><a href="https://dev.klud.top/talaria/">077</a></td><td>done</td><td>Gauntlet: Cleanser Icon Fix</td></tr>
-<tr><td><a href="https://dev.klud.top/talaria/">078</a></td><td>done</td><td>Gauntlet: Slow-Mo Effect (1/4 Speed)</td></tr>
-<tr><td><a href="https://dev.klud.top/talaria/">079</a></td><td>done</td><td>Gauntlet: Screenshake Follows Player</td></tr>
-<tr><td><a href="https://dev.klud.top/talaria/">080</a></td><td>done</td><td>Gauntlet: Disable Default Powerups Except Smack</td></tr>
-<tr><td><a href="https://dev.klud.top/talaria/">081</a></td><td>done</td><td>Gauntlet: Telegraph Floor Highlight Before Growth</td></tr>
-<tr><td><a href="https://dev.klud.top/talaria/">082</a></td><td>done</td><td>Gauntlet: Candy Bubble System</td></tr>
-<tr><td><a href="https://dev.klud.top/talaria/">083</a></td><td>done</td><td>Gauntlet: Movement Buffer System</td></tr>
-<tr><td><a href="https://dev.klud.top/talaria/">076</a></td><td>progress</td><td>Gauntlet: Polish — VFX, SFX, HUD &amp; Arena Scene</td></tr>
+<h2>Gauntlet (Shipped — <code>GameMode.GAUNTLET</code>)</h2>
+<p>The currently playable mode. Wired through <code>scripts/game_mode.gd</code> (the <code>GameMode.GAUNTLET</code> enum, value <code>3</code>, string <code>&amp;quot;Candy Pump Survival&amp;quot;</code>), orchestrated by <code>scripts/managers/gauntlet_manager.gd</code>, configured in <code>scripts/managers/lobby_manager.gd</code> (<code>gauntlet_round_duration</code>).</p>
+<h3>Live Constants (from source)</h3>
+<table><thead><tr><th>Constant</th><th>Value</th><th>Source</th></tr></thead><tbody>
+<tr><td>Arena size</td><td><strong>20 × 20</strong></td><td><code>gauntlet_manager.gd</code> <code>ARENA_COLUMNS=20</code>, <code>ARENA_ROWS=20</code></td></tr>
+<tr><td>Round duration</td><td><strong>180 s</strong> (host-configurable)</td><td><code>lobby_manager.gd</code> <code>gauntlet_round_duration=180</code></td></tr>
+<tr><td>NPC center</td><td><code>(9, 9)</code> (center of 3×3)</td><td><code>gauntlet_manager.gd</code> <code>NPC_CENTER</code></td></tr>
+<tr><td>Telegraph window</td><td><strong>1.0 s</strong> passable before sticky</td><td><code>gauntlet_manager.gd</code> <code>telegraph_duration=1.0</code></td></tr>
+<tr><td>Slow-mo duration</td><td><strong>4.0 s</strong> at ¼ speed</td><td><code>gauntlet_manager.gd</code> <code>slowmo_duration=4.0</code>, <code>trigger_slowmo()</code></td></tr>
+<tr><td>Phase 3 start</td><td>when <strong>120 s</strong> remain (Survival Endgame)</td><td><code>gauntlet_manager.gd</code> <code>PHASE_3_START=120.0</code></td></tr>
+<tr><td>Phase enum</td><td><code>OPEN_ARENA → ROUTE_PRESSURE → SURVIVAL_ENDGAME</code></td><td><code>gauntlet_manager.gd</code> <code>enum Phase</code></td></tr>
 </tbody></table>
-<p>All 19 gameplay/AI tasks are <code>done</code>; only the final polish pass (#076) is still in flight.</p>
+<h3>Task Coverage</h3>
+<table><thead><tr><th>#</th><th>Status</th><th>Task</th></tr></thead><tbody>
+<tr><td><a href="https://dev.klud.top/talaria/">065</a></td><td>done</td><td>Gauntlet: Game Mode Registration (<code>GameMode.GAUNTLET</code>, <code>LobbyManager</code>, <code>GauntletManager</code>)</td></tr>
+<tr><td><a href="https://dev.klud.top/talaria/">066</a></td><td>done</td><td>Gauntlet: Arena Setup (20×20 Grid with Layers) — matches <code>ARENA_COLUMNS</code>/<code>ARENA_ROWS</code></td></tr>
+<tr><td><a href="https://dev.klud.top/talaria/">067</a></td><td>done</td><td>Gauntlet: Growth Tick System — <code>gauntlet_manager._process_growth_tick()</code>, <code>_cells_this_tick()</code></td></tr>
+<tr><td><a href="https://dev.klud.top/talaria/">068</a></td><td>done</td><td>Gauntlet: Sticky Cell System — <code>is_sticky_cell()</code>, <code>clear_sticky_cell()</code>, <code>apply_sticky_slow()</code></td></tr>
+<tr><td><a href="https://dev.klud.top/talaria/">069</a></td><td>done</td><td>Gauntlet: Telegraph VFX — <code>sync_growth_telegraph()</code>, <code>_spawn_telegraph_highlight()</code></td></tr>
+<tr><td><a href="https://dev.klud.top/talaria/">070</a></td><td>done</td><td>Gauntlet: Growth Phase Escalation — <code>cells_per_tick</code> dict + <code>_check_phase_transition()</code></td></tr>
+<tr><td><a href="https://dev.klud.top/talaria/">071</a></td><td>done</td><td>Gauntlet: Smack Mechanic — <code>has_smack_charged()</code>, <code>consume_smack()</code></td></tr>
+<tr><td><a href="https://dev.klud.top/talaria/">072</a></td><td>done</td><td>Gauntlet: Cleanser Power-Up — <code>_try_use_cleanser()</code>, <code>use_cleanser_cell()</code></td></tr>
+<tr><td><a href="https://dev.klud.top/talaria/">073</a></td><td>done</td><td>Gauntlet: Candidate Scoring — <code>_calculate_candidate_score()</code> + 7 layer scorers</td></tr>
+<tr><td><a href="https://dev.klud.top/talaria/">074</a></td><td>done</td><td>Gauntlet: Tile Spawning &amp; Mission System — <code>setup_mission_tiles()</code></td></tr>
+<tr><td><a href="https://dev.klud.top/talaria/">075</a></td><td>done</td><td>Gauntlet: Bot AI — Sticky Avoidance &amp; Pathfinding (<code>BotStrategicPlanner</code>)</td></tr>
+<tr><td><a href="https://dev.klud.top/talaria/">077</a></td><td>done</td><td>Gauntlet: Cleanser Icon Fix — <code>_generate_cleanser_icon()</code></td></tr>
+<tr><td><a href="https://dev.klud.top/talaria/">078</a></td><td>done</td><td>Gauntlet: Slow-Mo Effect (1/4 Speed) — <code>trigger_slowmo(duration=4.0)</code></td></tr>
+<tr><td><a href="https://dev.klud.top/talaria/">079</a></td><td>done</td><td>Gauntlet: Screenshake Follows Player — <code>screen_shake.gd</code></td></tr>
+<tr><td><a href="https://dev.klud.top/talaria/">080</a></td><td>done</td><td>Gauntlet: Disable Default Powerups Except Smack</td></tr>
+<tr><td><a href="https://dev.klud.top/talaria/">081</a></td><td>done</td><td>Gauntlet: Telegraph Floor Highlight — <code>_spawn_telegraph_highlight()</code></td></tr>
+<tr><td><a href="https://dev.klud.top/talaria/">082</a></td><td>done</td><td>Gauntlet: Candy Bubble System — <code>_try_spawn_bubble()</code>, <code>_explode_bubble()</code></td></tr>
+<tr><td><a href="https://dev.klud.top/talaria/">083</a></td><td>done</td><td>Gauntlet: Movement Buffer System — <code>_detect_movement_buffers()</code>, <code>_buffer_penalty_at()</code></td></tr>
+<tr><td><a href="https://dev.klud.top/talaria/">076</a></td><td>progress</td><td>Gauntlet: Polish — VFX, SFX, HUD &amp; Arena Scene (<code>_setup_hud()</code>, <code>_animate_phase_label()</code>)</td></tr>
+</tbody></table>
+<p><strong>18 done / 1 in progress.</strong> Grep confirms <code>sugar_rush</code>, <code>mekton_bull</code>, <code>shrinking_arena</code>, <code>candy_survival</code> return <strong>0 hits</strong> anywhere in <code>tekton-enet/scripts/</code> — every designed mode on this page is unimplemented.</p>
 <hr>
 <h2>Candy Survival (Designed)</h2>
 <blockquote><p><strong>Candy Survival is a Gauntlet game mode.</strong> 2-minute-or-less matches built on Speed, Points, Knock, and Survive.</p></blockquote>
-<p>A free-for-all variant. Everyone runs, everyone steals, the Mekton sits in the middle as a scoring target.</p>
+<p>Free-for-all variant. Everyone runs, everyone steals, the Mekton sits in the middle as a scoring target. <strong>Not implemented</strong> — no function in <code>gauntlet_manager.gd</code> references candies, head-stacks, or Sugar Rush.</p>
 <h3>Arena</h3>
 <ul>
-<li><strong>18 × 18</strong> grid.
+<li><strong>18 × 18</strong> grid (vs. the 20 × 20 shipped in <code>gauntlet_manager.gd</code>).
 </li>
 <li>Blueprints are <strong>single-color focused</strong>.
 </li>
-<li><strong>Automatic tile pickup</strong> — no input needed; walking over a matching tile
- counts it.
+<li><strong>Automatic tile pickup</strong> — no input needed; walking over a matching
+ tile counts it.
 </li>
 <li>If your blueprint&#x27;s color runs out, finish it with any other color, but
  you only earn <strong>½ points</strong> for that blueprint.
@@ -489,7 +500,6 @@
 <tr><td>Visual</td><td>Rush bar turns red while active</td></tr>
 <tr><td>Stacking limit</td><td><strong>TBD</strong></td></tr>
 </tbody></table>
-<p>Rush stacks additively up to the cap, then any extra duration converts to points.</p>
 <h3>Knock &amp; Ghost Charges</h3>
 <p>Every player spawns with <strong>5 knock charges OR 5 ghost charges</strong> (your pick).</p>
 <ul>
@@ -509,7 +519,7 @@
 <hr>
 <h2>Mekton Bulls (Designed)</h2>
 <blockquote><p><strong>Mekton Bulls is a Gauntlet game mode.</strong> 2-minute-or-less matches built on placement scoring inside a shrinking arena.</p></blockquote>
-<p>A second designed mode. Mektons are no longer a fixed target — they are roaming bulls, and survival is placement-scored, not point-scored.</p>
+<p>A second designed mode. Mektons are no longer a fixed target — they are roaming bulls, and survival is placement-scored. <strong>Not implemented</strong> — no shrinking-arena code exists in <code>tekton-enet/scripts/</code>.</p>
 <h3>Arena &amp; Phases</h3>
 <p>The board <strong>shrinks every phase</strong>. A bull standing on the outside of the arena <strong>floods the outermost ring with water</strong> — instant elimination.</p>
 <table><thead><tr><th>Phase</th><th>Board</th></tr></thead><tbody>
@@ -543,34 +553,42 @@
 <tr><td>Middle</td><td>Linear between min and max</td></tr>
 </tbody></table>
 <hr>
-<h2>What&#x27;s Implemented (vs. Candy Survival design)</h2>
-<p>Both designed modes ride on the existing Gauntlet infrastructure. Below is what&#x27;s already shipped (#065–#083) and what would have to be added for Candy Survival / Mekton Bulls to ship.</p>
-<h3>Already in the codebase (referenced by task #)</h3>
+<h2>What&#x27;s Implemented vs. Designed</h2>
+<p>A direct comparison of what is in <code>tekton-enet/scripts/</code> today vs. what the two designed modes would require.</p>
+<h3>Already in <code>gauntlet_manager.gd</code> (referenced by task #)</h3>
 <ul>
-<li><strong>Mode registration, arena, orchestrator</strong> — #065, #066.
+<li><strong>Mode registration, arena, orchestrator</strong> — #065, #066 (<code>GameMode</code>,
+ <code>GauntletManager</code>, <code>LobbyManager</code>).
 </li>
 <li><strong>Growth hazard</strong> (sticky cells, telegraph, growth tick, phase escalation)
- — #067, #068, #069, #070, #081.
+ — #067, #068, #069, #070, #081 (<code>_process_growth_tick</code>, <code>is_sticky_cell</code>,
+ <code>sync_growth_telegraph</code>, <code>_check_phase_transition</code>).
 </li>
-<li><strong>Mission tiles &amp;amp; tile spawning</strong> — #074.
+<li><strong>Mission tiles &amp;amp; tile spawning</strong> — #074 (<code>setup_mission_tiles</code>).
 </li>
 <li><strong>AI (candidate scoring, sticky avoidance, movement buffer)</strong> — #073,
- #075, #083.
+ #075, #083 (<code>_calculate_candidate_score</code>, <code>BotStrategicPlanner</code>,
+ <code>_detect_movement_buffers</code>).
 </li>
-<li><strong>Smack knockback</strong> (re-used as the &quot;Knock&quot; charge) — #071.
+<li><strong>Smack knockback</strong> (re-usable as the &quot;Knock&quot; charge) — #071
+ (<code>has_smack_charged</code>, <code>consume_smack</code>).
 </li>
-<li><strong>Cleanser power-up + icon</strong> — #072, #077.
+<li><strong>Cleanser power-up + icon</strong> — #072, #077 (<code>_try_use_cleanser</code>,
+ <code>_generate_cleanser_icon</code>).
 </li>
-<li><strong>Feedback</strong> (slow-mo, screenshake) — #078, #079.
+<li><strong>Feedback</strong> (slow-mo, screenshake) — #078, #079 (<code>trigger_slowmo</code>,
+ <code>screen_shake.gd</code>).
 </li>
-<li><strong>Extras</strong> (candy bubble, disable default powerups) — #080, #082.
+<li><strong>Extras</strong> (candy bubble, disable default powerups) — #080, #082
+ (<code>_try_spawn_bubble</code>, <code>_explode_bubble</code>).
 </li>
-<li><strong>Polish pass</strong> — #076 (in progress).
+<li><strong>Polish pass</strong> — #076 (<code>_setup_hud</code>, <code>_animate_phase_label</code>).
 </li>
 </ul>
-<h3>New for Candy Survival</h3>
+<h3>New for Candy Survival (not in source)</h3>
 <ul>
-<li><strong>18 × 18 arena</strong> (currently 20 × 20 in #066).
+<li><strong>18 × 18 arena</strong> (would need to override <code>ARENA_COLUMNS=20</code> /
+ <code>ARENA_ROWS=20</code>).
 </li>
 <li><strong>Candy stack on head</strong> with per-second multiplier + visible <code>×N</code> badge.
 </li>
@@ -589,7 +607,7 @@
 <li><strong>&lt;code&gt;/2&lt;/code&gt; point penalty</strong> for finishing a blueprint with the wrong color.
 </li>
 </ul>
-<h3>New for Mekton Bulls</h3>
+<h3>New for Mekton Bulls (not in source)</h3>
 <ul>
 <li><strong>Shrinking arena</strong> (20 → 19 → 18 → 17) with <strong>water-flood outer ring</strong>.
 </li>
@@ -603,7 +621,9 @@
 <li><strong>Placement-scored</strong> static point system (replaces the per-second
  trickle).
 </li>
-</ul></article>
+</ul>
+<h3>Duration callout</h3>
+<p>The shipped default is <strong>180 s</strong> (<code>gauntlet_round_duration</code>), but the designed modes target <strong>≤ 120 s</strong>. The host can lower the timer today via <code>LobbyManager.set_gauntlet_round_duration()</code>; no code change needed for the shorter cap, just a lobby preset.</p></article>
         </main>
 
         <footer class="page-footer">
