@@ -7,7 +7,7 @@ priority: 01
 sprint: alpha
 category: CORE
 description: "Implement phase-based difficulty escalation for the ground growth system, replacing the old impact shape (1×1, 1×2, 2×2) system."
-modified: "2026-06-25"
+modified: "2026-06-26"
 ---
 
 # Gauntlet: Growth Phase Escalation

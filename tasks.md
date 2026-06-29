@@ -1,0 +1,12 @@
+- [x] Fix Gauntlet Cleanser to instantly clear 3x3 AoE sticky cells and free players immediately.
+- [x] Fix Gauntlet Cleanser to stack charges instead of capping at 1.
+- [x] Fix Gauntlet Cleanser VFX and SFX when purifying.
+- [x] Fix Gauntlet Center Candy Cannon mesh to look cool with spinning rings.
+- [x] Fix Gauntlet Center Candy Cannon to shoot actual projectiles that leave a VFX trail towards sticky cells.
+- [x] Fix Gauntlet map layout to remove red unpassable barrier blocks and center blocks, replacing them with a visual walkable floor but acting as hard blockers in physics.
+- [x] Fix Gauntlet to prevent powerups or sticky bubbles from spawning on boundary tiles or under the central cannon.
+- [x] Fix Gauntlet Cleanser UI phase label layout to not overlap.
+- [x] Fix Gauntlet to prevent sticky bubble spawn on NPC central zone and boundary walls
+- [x] Added instant visual feedback indicator for Gauntlet Cleanser using popup text when consumed
+- [x] Pushed all local changes for v2.4.0 Gauntlet mode improvements to 'experimental' branch
+- [x] Pushed release version v2.4.1, updated project settings and CHANGELOG, and triggered GitHub Actions release pipeline

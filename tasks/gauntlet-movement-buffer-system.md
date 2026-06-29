@@ -7,7 +7,7 @@ priority: 02
 sprint: alpha
 category: CORE
 description: "Implement the hidden movement buffer system that prevents the arena from becoming movement-broken too early."
-modified: "2026-06-25"
+modified: "2026-06-26"
 ---
 
 # Gauntlet: Movement Buffer System
