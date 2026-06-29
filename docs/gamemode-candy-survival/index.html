@@ -3,8 +3,8 @@
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Candy Survival — Sugar Rush Chaos · Talaria</title>
-        <meta name="description" content="Speed-and-points Gauntlet variant: 18×18 arena, automatic tile pickup, candy stack delivery, knock mechanics, and Sugar Rush mutators." />
+        <title>Candy Survival · Talaria</title>
+        <meta name="description" content="Candy Survival is a Gauntlet game mode — 2-minute-or-less matches built on Speed, Points, Knock, and Survive." />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
         <link
@@ -393,7 +393,7 @@
                     <a href="../about/">About Talaria</a>
 <a href="../authoring-pages/">Pages Authoring Guide</a>
 <a href="../changelog/">Changelog</a>
-<a href="../gamemode-candy-survival/" class="active">Candy Survival — Sugar Rush Chaos</a>
+<a href="../gamemode-candy-survival/" class="active">Candy Survival</a>
                 </nav>
                 <div class="actions">
                     <button
@@ -409,112 +409,90 @@
         </header>
 
         <main>
-            <article class="markdown-body"><h1>Candy Survival — Sugar Rush Chaos</h1>
-<p>A high-tempo Gauntlet variant built around <strong>Speed</strong>, <strong>Points</strong>, and <strong>Knock players — Survive</strong>. 2-minute-or-less matches on an <strong>18×18</strong> arena.</p>
-<h2>Core Loop</h2>
-<ol>
-<li>Walk over tiles → automatic pickup into your blueprint progress.
-</li>
-<li>Finish a blueprint → a candy of the matching color spawns on top of your
- head.
-</li>
-<li>Stack as many candies as you can carry.
-</li>
-<li>Deliver them to the <strong>Mekton</strong> when its face is the same color as the
- candy.
-</li>
-<li>Knock rivals to steal their candies — or get knocked yourself.
-</li>
-</ol>
+            <article class="markdown-body"><h1>Candy Survival</h1>
+<p><strong>Candy Survival is a Gauntlet game mode.</strong></p>
+<p>It belongs to the same family as Candy Pump Survival, registered under the <code>GAUNTLET</code> mode enum (<code>scripts/game_mode.gd</code>) and the <code>Gauntlet Arena</code> lobby area. What makes it its own sub-mode is the <strong>speed-and-points</strong> loop: walk the arena, stack candies, feed the Mekton, and survive the chaos for up to <strong>2 minutes per match</strong>.</p>
+<h2>At a Glance</h2>
+<table><thead><tr><th>Pillar</th><th>Description</th></tr></thead><tbody>
+<tr><td>Speed</td><td>Automatic tile pickup, Mekton-paced color rotation, Sugar Rush mutator</td></tr>
+<tr><td>Points</td><td>Per-second carry multiplier, big delivery payouts, half-credit for off-color finishes</td></tr>
+<tr><td>Knock</td><td>Steal candies off other players&#x27; heads; ghosts bypass the same</td></tr>
+<tr><td>Survive</td><td>Sticky floor, shrinking arena, bulls, and water-flood rings</td></tr>
+</tbody></table>
+<p>Matches are <strong>2 minutes or less</strong> — short enough for a queue rotation, long enough to swing placement on points, knock, and timing.</p>
 <hr>
-<h2>Arena</h2>
+<h2>Sugar Rush Chaos</h2>
+<p>A free-for-all variant. Everyone runs, everyone steals.</p>
+<h3>Arena</h3>
 <ul>
 <li><strong>18 × 18</strong> grid.
 </li>
-<li><strong>Blueprints are 1-color focused</strong> — every blueprint is a single color.
+<li>Blueprints are <strong>single-color focused</strong>.
 </li>
-<li>If the blueprint&#x27;s color runs out before you finish it, you may complete it
- with <strong>any other color</strong>, but you only earn <strong>½ points</strong> for that blueprint.
-</li>
-<li><strong>Automatic tile pickup</strong> — no keypress needed; walking over a matching tile
+<li><strong>Automatic tile pickup</strong> — no input needed; walking over a matching tile
  counts it.
 </li>
+<li>If your blueprint&#x27;s color runs out, you can finish it with any other
+ color, but you only earn <strong>½ points</strong> for that blueprint.
+</li>
 </ul>
-<h2>Candies on Your Head</h2>
+<h3>Candies on Your Head</h3>
 <ul>
 <li>Finishing a blueprint drops a candy on your head in the matching color.
 </li>
-<li>You can <strong>stack as many as you want</strong> — there is no hard cap on carries.
+<li><strong>No carry cap</strong> — stack as many as you can carry.
 </li>
-<li>Candies give you <strong>points every second</strong>, and the more you stack, the
- <strong>bigger the multiplier</strong> on points earned.
+<li>Candies grant <strong>points every second</strong>. The more you stack, the **bigger the
+ multiplier** on points earned.
 </li>
-<li>The stack counter must be visible — show a <code>×2</code> (or current multiplier)
- badge next to the Mekton head sprite.
+<li>A <code>×2</code> (or current multiplier) badge must render **next to the Mekton head
+ sprite** so opponents see the threat.
 </li>
 </ul>
-<h2>Mekton Delivery</h2>
+<h3>Mekton Delivery</h3>
 <ul>
-<li>The Mekton face changes color periodically.
+<li>The Mekton&#x27;s face changes color on a timer.
 </li>
-<li>You can <strong>only deliver</strong> candies whose color matches the Mekton&#x27;s current
+<li>You can only deliver candies whose color matches the Mekton&#x27;s <strong>current</strong>
  face color.
 </li>
-<li>Hitting the Mekton with a matching stack = <strong>big point payout</strong> for that
- delivery.
+<li>A successful delivery = <strong>big point payout</strong>.
 </li>
-<li>Non-matching candies stay on your head (no penalty, but no delivery).
+<li>Mismatched candies stay on your head (no penalty, no delivery).
 </li>
 </ul>
-<hr>
-<h2>Sugar Rush Mutator</h2>
-<p>Feeding a candy to the Mekton triggers a <strong>Sugar Rush</strong>:</p>
-<table><thead><tr><th>Parameter</th><th>Value (current)</th></tr></thead><tbody>
-<tr><td>Base rush time</td><td><strong>2 seconds</strong></td></tr>
-<tr><td>Multiplier</td><td><strong>×1.2</strong> per candy fed in this batch</td></tr>
-<tr><td>Example</td><td>5 candies × 1.2 = <strong>4 s</strong> of rush</td></tr>
-<tr><td>Effect</td><td>Game speed <strong>×2</strong> — projectiles, dashers, AI, all timers</td></tr>
-<tr><td>Visual</td><td>Rush bar turns <strong>red</strong> while active</td></tr>
-<tr><td>Stacking limit</td><td><strong>TBD</strong> (cap on rush duration / refresh)</td></tr>
+<h3>Sugar Rush Mutator</h3>
+<p>Feeding a candy to the Mekton triggers <strong>Sugar Rush</strong>:</p>
+<table><thead><tr><th>Parameter</th><th>Value</th></tr></thead><tbody>
+<tr><td>Base rush time</td><td>2 s</td></tr>
+<tr><td>Multiplier</td><td>×1.2 per candy in the batch</td></tr>
+<tr><td>Example</td><td>5 candies × 1.2 = 4 s of rush</td></tr>
+<tr><td>Effect</td><td>Game speed ×2 — projectiles, dashers, AI, all timers</td></tr>
+<tr><td>Visual</td><td>Rush bar turns red while active</td></tr>
+<tr><td>Stacking limit</td><td><strong>TBD</strong></td></tr>
 </tbody></table>
-<blockquote><p>Rush stacks additively up to the cap, then convert into points.</p></blockquote>
-<hr>
-<h2>Knock / Ghost Charges</h2>
+<p>Rush stacks additively up to the cap, then any extra duration converts to points.</p>
+<h3>Knock &amp; Ghost Charges</h3>
+<p>Every player spawns with <strong>5 knock charges OR 5 ghost charges</strong> (your pick).</p>
 <ul>
-<li>Every player spawns with <strong>5 knock charges OR 5 ghost charges</strong> (your pick).
+<li><strong>Knock</strong> — shove another player. If they carry candies, **you steal them
+ all** and they stack onto your pile.
 </li>
-<li><strong>Knock:</strong> shove another player; if they carry candies, <strong>you steal them all</strong>
- and they stack onto your own pile.
+<li><strong>Ghost (4 s)</strong> — walk through candies freely and <strong>cannot be knocked</strong>.
 </li>
-<li><strong>Ghost (4 s):</strong> walk through candies freely and <strong>cannot be knocked</strong>.
-</li>
-<li><strong>Self-knock rule:</strong> if you knock a player who carries <strong>no candies</strong>, the
- knock rebounds and <strong>you get knocked</strong> instead.
+<li><strong>Self-knock rule</strong> — knocking a player who carries no candies rebounds:
+ <strong>you get knocked instead</strong>.
 </li>
 </ul>
-<h2>Sticky Floor</h2>
-<p>Sticky material on the floor is <strong>pure collision</strong> — it acts like a wall. Standing in it = trapped, same as a hard tile. No tile-pickup, no movement.</p>
+<h3>Sticky Floor</h3>
+<p>Sticky material is <strong>pure collision</strong> — it acts like a wall. Standing in it is the same as standing on a hard tile: trapped, no pickup, no movement.</p>
+<h3>Mekton Cheerleaders (TBD)</h3>
+<p>Cheerleaders stand <strong>outside</strong> the board. Each player picks one during lobby. They activate only when you are <strong>low on the leaderboard</strong>. Per-cheerleader buffs are still TBD.</p>
 <hr>
-<h2>Mekton Cheerleaders (TBD)</h2>
-<p>Cheerleaders stand <strong>outside</strong> the board. Each player picks one during lobby:</p>
-<ul>
-<li>Activates only when you are <strong>low on the leaderboard</strong>.
-</li>
-<li>Effect list and per-cheerleader buffs are still <strong>TBD</strong>.
-</li>
-</ul>
-<hr>
-<h1>Mekton Bulls — Shrinking Arena</h1>
-<p>A second mode in the Candy Survival family: the Mektons are now roaming bulls.</p>
-<h2>Loop</h2>
-<ul>
-<li><strong>Big Mektons</strong> stampede around the arena like bulls.
-</li>
-<li>A bull that touches a player <strong>knocks them out</strong>.
-</li>
-<li>The board <strong>shrinks every phase</strong>:
-</li>
-</ul>
+<h2>Mekton Bulls — Shrinking Arena</h2>
+<p>The second sub-mode. Mektons are no longer a fixed target — they are now roaming bulls.</p>
+<h3>Arena &amp; Phases</h3>
+<p>The board <strong>shrinks every phase</strong>. A bull standing on the outside of the arena <strong>floods the outermost ring with water</strong> — instant elimination.</p>
 <table><thead><tr><th>Phase</th><th>Board</th></tr></thead><tbody>
 <tr><td>1</td><td>20 × 20</td></tr>
 <tr><td>2</td><td>19 × 19</td></tr>
@@ -522,36 +500,53 @@
 <tr><td>4</td><td>17 × 17</td></tr>
 <tr><td>5</td><td>END</td></tr>
 </tbody></table>
+<h3>Loop</h3>
 <ul>
-<li>A bull standing on the outside of the arena **floods the outermost ring
- with water** — instant elimination if you&#x27;re caught in it.
+<li><strong>Big Mektons</strong> stampede around the arena like bulls.
 </li>
-</ul>
-<h2>Blueprints &amp; Power</h2>
-<ul>
-<li>Blueprints are small, <strong>3 × 3</strong>.
+<li>A bull that touches a player <strong>knocks them out</strong>.
 </li>
-<li><strong>Automatic tile pickup</strong> (same as Sugar Rush).
+<li>Blueprints are small, <strong>3 × 3</strong>, with <strong>automatic tile pickup</strong>.
 </li>
-<li>Completing a blueprint grants <strong>1 power</strong>, your choice:
+<li>Completing a blueprint grants <strong>1 power</strong> — your choice:
  - <strong>Freeze</strong> — slow the nearest bull long enough to escape.
- - <strong>Knock</strong> — shove another player into the bull&#x27;s path or straight out
- of the shrinking arena.
+ - <strong>Knock</strong> — shove another player into the bull&#x27;s path or out of the
+ shrinking arena.
 </li>
 <li>Players can <strong>knock each other</strong> with the same mechanics the bulls use.
 </li>
 </ul>
-<h2>Scoring</h2>
+<h3>Scoring</h3>
 <p><strong>Static point system</strong> — placement-based, no per-second trickle.</p>
 <table><thead><tr><th>Placement</th><th>Points</th></tr></thead><tbody>
 <tr><td>Last standing</td><td>Max (fixed)</td></tr>
 <tr><td>First out</td><td>Min (fixed)</td></tr>
-<tr><td>Middle</td><td>Linear interpolation between min and max</td></tr>
+<tr><td>Middle</td><td>Linear between min and max</td></tr>
 </tbody></table>
 <hr>
-<h2>Mode Picker</h2>
-<blockquote><p>2 minutes or less per game. <strong>Candy Survival is ( Gauntlet ).</strong></p></blockquote>
-<p>The current default mode picker routes Sugar Rush Chaos and Mekton Bulls under the <strong>Gauntlet</strong> umbrella — fast matches, respawn off, single life unless the mode explicitly grants one.</p></article>
+<h2>Why &quot;Gauntlet&quot;</h2>
+<p>Candy Survival inherits the Gauntlet contract from <code>gauntlet-game-mode-registration</code>:</p>
+<ul>
+<li>registered under <code>GameMode.GAUNTLET</code>,
+</li>
+<li>routed to the <code>Gauntlet Arena</code> lobby area,
+</li>
+<li>driven by <code>gauntlet_round_duration</code> (≤ 120 s for Candy Survival),
+</li>
+<li>orchestrated by <code>GauntletManager</code> from <code>main.gd</code>.
+</li>
+</ul>
+<p>What it adds on top of the base Gauntlet:</p>
+<ul>
+<li><strong>Candy stack</strong> economy (head + multiplier + Mekton delivery).
+</li>
+<li><strong>Knock / Ghost</strong> charges as spawn gear.
+</li>
+<li><strong>Sugar Rush</strong> mutator (speed ×2) and <strong>Bull</strong> sub-mode (shrinking arena +
+ placement scoring).
+</li>
+</ul>
+<p>Everything else — <code>gauntlet_growth_interval</code>, <code>gauntlet_cells_per_tick</code>, the Cleanser power-up, sticky cells, telegraphed tiles — is shared with the rest of the Gauntlet family and described in the per-feature task docs under <code>tasks/</code>.</p></article>
         </main>
 
         <footer class="page-footer">

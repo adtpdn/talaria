@@ -22,8 +22,8 @@
   },
   {
     "slug": "gamemode-candy-survival",
-    "title": "Candy Survival — Sugar Rush Chaos",
-    "description": "Speed-and-points Gauntlet variant: 18×18 arena, automatic tile pickup, candy stack delivery, knock mechanics, and Sugar Rush mutators.",
+    "title": "Candy Survival",
+    "description": "Candy Survival is a Gauntlet game mode — 2-minute-or-less matches built on Speed, Points, Knock, and Survive.",
     "modified": "2026-06-29",
     "file": "gamemode-candy-survival.md"
   }
