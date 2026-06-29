@@ -4,7 +4,7 @@
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>GameModes · Talaria</title>
-        <meta name="description" content="Talaria game-mode catalog. Gauntlet (shipped, as Candy Pump Survival) → migrating to Sugar Rush, plus the designed Mekton Bulls sub-mode." />
+        <meta name="description" content="Talaria game-mode catalog. Gauntlet (shipped, as Candy Pump Survival) → migrating to Sugar Rush, plus the new Mekton Bulls game mode (#134-#145)." />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
         <link
@@ -410,8 +410,8 @@
 
         <main>
             <article class="markdown-body"><h1>GameModes</h1>
-<p>Talaria&#x27;s current shipped mode family is <strong>Gauntlet</strong> (displayed in the lobby as <strong>&amp;quot;Candy Pump Survival&amp;quot;</strong>). The next iteration renames it to <strong>Sugar Rush</strong> — same enum (<code>GameMode.GAUNTLET = 3</code>), same manager (<code>scripts/managers/gauntlet_manager.gd</code>), but with the <em>Speed / Points / Knock / Survive</em> design pillar from the page below baked in.</p>
-<p>A second sub-mode, <strong>Mekton Bulls</strong>, sits on top of Sugar Rush with a shrinking arena and placement scoring.</p>
+<p>Talaria&#x27;s current shipped mode family is <strong>Gauntlet</strong> (displayed in the lobby as <strong>&amp;quot;Candy Pump Survival&amp;quot;</strong>). The next iteration renames it to <strong>Sugar Rush</strong> — same enum (<code>GameMode.GAUNTLET = 3</code>), same manager (<code>scripts/managers/gauntlet_manager.gd</code>), but with the <em>Speed / Points / Knock / Survive</em> design pillar baked in.</p>
+<p>A second, brand-new game mode — <strong>Mekton Bulls</strong> (<code>#134</code>–<code>#145</code>) — sits alongside Sugar Rush as its <strong>own top-level mode</strong> (not a Sugar-Rush sub-flag). It has its own manager, its own enum entry (<code>GameMode.MEKTON_BULLS = 4</code>), its own lobby string, and a shrinking-arena + placement-scoring loop that shares zero rules with Sugar Rush.</p>
 <p>Every implementation reference is grounded in the live Godot project at <code>/home/beng/Godot/Projects/tekton-enet</code>, against the task list at <code>/home/beng/Documents/github/talaria</code>.</p>
 <hr>
 <h2>Sugar Rush (Next iteration — replaces Gauntlet)</h2>
@@ -426,7 +426,7 @@
 <tr><td>Phase enum</td><td><code>OPEN_ARENA → ROUTE_PRESSURE → SURVIVAL_ENDGAME</code></td><td><code>OPEN_ARENA → SUGAR_RUSH × STACK → SURVIVAL_ENDGAME</code></td><td><code>gauntlet_manager.gd</code> <code>enum Phase</code></td></tr>
 </tbody></table>
 <h3>Migration Map — shipped Gauntlet → Sugar Rush</h3>
-<p>Each shipped Gauntlet task #065–#083 maps to one or more new Sugar Rush tasks (#111–#133). Old tasks stay <code>done</code>; new tasks carry the work.</p>
+<p>Each shipped Gauntlet task #065–#083 maps to one or more new Sugar Rush tasks (<code>#111</code>–<code>#131</code> for Sugar Rush, <code>#134</code>–<code>#145</code> for the new Mekton Bulls game mode). Old tasks stay <code>done</code>; new tasks carry the work.</p>
 <table><thead><tr><th>Old #</th><th>Shipped (Gauntlet)</th><th>New #</th><th>Sugar Rush replacement</th></tr></thead><tbody>
 <tr><td><a href="https://dev.klud.top/talaria/">065</a></td><td>Game Mode Registration (display string = &quot;Candy Pump Survival&quot;)</td><td><a href="#task-111">111</a></td><td>Sugar Rush Mode Registration + rename to &quot;Sugar Rush&quot;</td></tr>
 <tr><td><a href="https://dev.klud.top/talaria/">066</a></td><td>Arena Setup 20 × 20</td><td><a href="#task-112">112</a></td><td>Arena Setup 18 × 18</td></tr>
@@ -452,8 +452,7 @@
 <tr><td>—</td><td>—</td><td><a href="#task-128">128</a></td><td>Mekton Delivery Rules (matching-color only)</td></tr>
 <tr><td>—</td><td>—</td><td><a href="#task-129">129</a></td><td>Half-Point Penalty for Off-Color Finish</td></tr>
 <tr><td>—</td><td>—</td><td><a href="#task-131">131</a></td><td>Self-Knock Rebound (no-candy target)</td></tr>
-<tr><td>—</td><td>—</td><td><a href="#task-132">132</a></td><td>Mekton Bulls Sub-Mode Flag</td></tr>
-<tr><td>—</td><td>—</td><td><a href="#task-133">133</a></td><td>Mekton Bulls Shrinking Arena + Water Flood</td></tr>
+<tr><td>—</td><td>—</td><td>—</td><td><em>(Mekton Bulls has its own game-mode task chain &lt;code&gt;#134&lt;/code&gt;–&lt;code&gt;#145&lt;/code&gt;; see &lt;a href=&quot;#mekton-bulls-new-top-level-game-mode-134145&quot;&gt;the Mekton Bulls section&lt;/a&gt;)</em></td></tr>
 </tbody></table>
 <p>Grep confirms <code>sugar_rush</code>, <code>mekton_bull</code>, <code>shrinking_arena</code> return <strong>0 hits</strong> anywhere in <code>tekton-enet/scripts/</code> — every new task is unimplemented.</p>
 <h3>Sugar Rush design spec</h3>
@@ -522,9 +521,30 @@
 <h4>Mekton Cheerleaders (TBD)</h4>
 <p>Cheerleaders stand <strong>outside</strong> the board. Each player picks one during lobby. They activate only when you are <strong>low on the leaderboard</strong>. Per-cheerleader buffs are still TBD.</p>
 <hr>
-<h2>Mekton Bulls (Designed sub-mode)</h2>
-<blockquote><p>Mekton Bulls is a Gauntlet game mode. 2-minute-or-less matches built on placement scoring inside a shrinking arena.</p></blockquote>
-<p>A second designed mode. Mektons are no longer a fixed target — they are roaming bulls, and survival is placement-scored. <strong>Not implemented</strong> — no shrinking-arena code exists in <code>tekton-enet/scripts/</code>.</p>
+<h2>Mekton Bulls (New top-level game mode — <code>#134</code>–<code>#145</code>)</h2>
+<blockquote><p>Mekton Bulls is a Talaria game mode. 2-minute-or-less matches built on placement scoring inside a shrinking arena with a roaming bull.</p></blockquote>
+<p>A second mode in the same family as Sugar Rush, but a <strong>peer</strong> — it has its own enum entry (<code>GameMode.MEKTON_BULLS = 4</code>), its own <code>MektonBullsManager</code>, its own lobby string, and shares zero gameplay rules with Sugar Rush. Tracking lives under <code>#134</code>–<code>#145</code>; structural skeleton (<code>#134</code>) is <code>progress</code>, the rest are <code>todo</code> and gated on it.</p>
+<h3>Game-Mode Separation Pattern (how Talaria splits modes)</h3>
+<p>Mirroring how <code>Freemode / Stop n Go / Tekton Doors / Gauntlet</code> are separated today, each Talaria mode owns its own manager node and is selected via the <code>GameMode</code> enum + <code>LobbyManager.game_mode</code> string. <code>scenes/main.gd</code> dispatches on the string and conditionally creates the matching manager. <code>Freemode</code> is the baseline with no manager.</p>
+<table><thead><tr><th>Mode</th><th>Enum</th><th>Manager</th><th>Arena rules</th><th>Scoring</th></tr></thead><tbody>
+<tr><td>Freemode</td><td><code>FREEMODE = 0</code></td><td>(none — baseline)</td><td>Open arena</td><td>Free</td></tr>
+<tr><td>Stop n Go</td><td><code>STOP_N_GO = 1</code></td><td><code>StopNGoManager</code></td><td>Phase-based stops</td><td>Phase timer</td></tr>
+<tr><td>Tekton Doors</td><td><code>TEKTON_DOORS = 2</code></td><td><code>PortalModeManager</code></td><td>Portal-driven</td><td>Portal capture</td></tr>
+<tr><td>Gauntlet / Sugar Rush</td><td><code>GAUNTLET = 3</code></td><td><code>GauntletManager</code></td><td>18 × 18 sticky growth</td><td>Per-second + delivery</td></tr>
+<tr><td><strong>Mekton Bulls</strong></td><td><strong>&lt;code&gt;MEKTON_BULLS = 4&lt;/code&gt;</strong></td><td><strong>&lt;code&gt;MektonBullsManager&lt;/code&gt;</strong></td><td><strong>Shrinking arena, bulls</strong></td><td><strong>Placement</strong></td></tr>
+</tbody></table>
+<p>Mekton Bulls is its own mode, not a Sugar-Rush sub-flag, because:</p>
+<ul>
+<li>The arena lifetime is different (shrinks mid-match).
+</li>
+<li>The scoring system is different (placement, not points-per-time).
+</li>
+<li>The hazard is different (roaming bull, not sticky growth).
+</li>
+<li>The manager has <strong>zero</strong> code overlap with <code>GauntletManager</code>.
+</li>
+</ul>
+<p>Folding it into Gauntlet would couple two different games behind a boolean flag — the shipped pattern (one manager per game mode) is the correct mirror.</p>
 <h3>Arena &amp; Phases</h3>
 <p>The board <strong>shrinks every phase</strong>. A bull standing on the outside of the arena <strong>floods the outermost ring with water</strong> — instant elimination.</p>
 <table><thead><tr><th>Phase</th><th>Board</th></tr></thead><tbody>
@@ -659,15 +679,49 @@
  new feature (TBD).
 </li>
 </ul>
-<h3>Mekton Bulls</h3>
+<h3>Mekton Bulls (<code>#134</code>–<code>#145</code>)</h3>
 <ul>
-<li>&lt;a id=&quot;task-132&quot;&gt;&lt;/a&gt;<strong>#132 Mekton Bulls Sub-Mode Flag</strong> — register
- Mekton Bulls as a sub-mode flag on <code>GameMode.GAUNTLET</code>.
- new feature.
+<li>&lt;a id=&quot;task-134&quot;&gt;&lt;/a&gt;<strong>#134 Mekton Bulls: Game Mode Registration</strong> —
+ <code>progress</code>. The structural skeleton: enum entry, <code>LobbyManager</code>
+ string, area mapping, <code>MektonBullsManager</code> node, <code>main.gd</code> dispatch
+ hooks. All other Mekton Bulls tasks are <code>blocked_by: [&amp;quot;134&amp;quot;]</code>.
 </li>
-<li>&lt;a id=&quot;task-133&quot;&gt;&lt;/a&gt;<strong>#133 Mekton Bulls Shrinking Arena + Water Flood</strong>
- — implement phase board shrinks and outer-ring water elimination.
- new feature.
+<li>&lt;a id=&quot;task-135&quot;&gt;&lt;/a&gt;<strong>#135 Mekton Bulls: Arena Setup &amp;amp; Phase Shrinker</strong>
+ — 20 × 20 → 19 → 18 → 17 phase shrinks.
+</li>
+<li>&lt;a id=&quot;task-136&quot;&gt;&lt;/a&gt;<strong>#136 Mekton Bulls: Big Mekton Bull Spawner + Roam AI</strong>
+ — bull entity that roams and charges players.
+</li>
+<li>&lt;a id=&quot;task-137&quot;&gt;&lt;/a&gt;<strong>#137 Mekton Bulls: Water Flood Outer Ring</strong> —
+ bull-on-boundary floods the outermost ring; players there die.
+</li>
+<li>&lt;a id=&quot;task-138&quot;&gt;&lt;/a&gt;<strong>#138 Mekton Bulls: 3 × 3 Blueprint Auto-Pickup</strong>
+ — small 3 × 3 blueprints with automatic pickup.
+</li>
+<li>&lt;a id=&quot;task-139&quot;&gt;&lt;/a&gt;<strong>#139 Mekton Bulls: Power Reward — Freeze OR Knock</strong>
+ — 1 power per blueprint completion (Freeze slow or Knock shove).
+</li>
+<li>&lt;a id=&quot;task-140&quot;&gt;&lt;/a&gt;<strong>#140 Mekton Bulls: Placement-Scored Point System</strong>
+ — static min/max points; first out = min, last standing = max,
+ middle = linear interpolation.
+</li>
+<li>&lt;a id=&quot;task-141&quot;&gt;&lt;/a&gt;<strong>#141 Mekton Bulls: Bot AI (Bull Avoidance + Knock Steal Pathing)</strong>
+ — bot pathing that avoids the bull and times Freeze/Knock pickups.
+</li>
+<li>&lt;a id=&quot;task-142&quot;&gt;&lt;/a&gt;<strong>#142 Mekton Bulls: Player Knock (Mutual Knockback)</strong>
+ — players knock each other (1 cell shove; chains into water or bull).
+</li>
+<li>&lt;a id=&quot;task-143&quot;&gt;&lt;/a&gt;<strong>#143 Mekton Bulls: HUD — Bull Tracker, Power Picker, Placement</strong>
+ — bull-tracker arrow, freeze/knock power picker, end-of-match
+ placement overlay.
+</li>
+<li>&lt;a id=&quot;task-144&quot;&gt;&lt;/a&gt;<strong>#144 Mekton Bulls: Polish — Bull SFX + Knock Burst</strong>
+ — bull charge/impact SFX, freeze VFX, water-flood splash, knock
+ burst.
+</li>
+<li>&lt;a id=&quot;task-145&quot;&gt;&lt;/a&gt;<strong>#145 Mekton Bulls: Round Timer &amp;amp; Phase Auto-Advance</strong>
+ — ≤ 2 min round, auto phase advance every 30 s, early-end on
+ last survivor.
 </li>
 </ul>
 <hr>

@@ -1,7 +1,7 @@
 ---
 title: "GameModes"
 slug: "gamemode-candy-survival"
-description: "Talaria game-mode catalog. Gauntlet (shipped, as Candy Pump Survival) → migrating to Sugar Rush, plus the designed Mekton Bulls sub-mode."
+description: "Talaria game-mode catalog. Gauntlet (shipped, as Candy Pump Survival) → migrating to Sugar Rush, plus the new Mekton Bulls game mode (#134-#145)."
 modified: "2026-06-29"
 ---
 
@@ -11,10 +11,14 @@ Talaria's current shipped mode family is **Gauntlet** (displayed in the
 lobby as **"Candy Pump Survival"**). The next iteration renames it to
 **Sugar Rush** — same enum (`GameMode.GAUNTLET = 3`), same manager
 (`scripts/managers/gauntlet_manager.gd`), but with the *Speed / Points /
-Knock / Survive* design pillar from the page below baked in.
+Knock / Survive* design pillar baked in.
 
-A second sub-mode, **Mekton Bulls**, sits on top of Sugar Rush with a
-shrinking arena and placement scoring.
+A second, brand-new game mode — **Mekton Bulls** (`#134`–`#145`) — sits
+alongside Sugar Rush as its **own top-level mode** (not a Sugar-Rush
+sub-flag). It has its own manager, its own enum entry
+(`GameMode.MEKTON_BULLS = 4`), its own lobby string, and a
+shrinking-arena + placement-scoring loop that shares zero rules with
+Sugar Rush.
 
 Every implementation reference is grounded in the live Godot project at
 `/home/beng/Godot/Projects/tekton-enet`, against the task list at
@@ -41,7 +45,7 @@ Every implementation reference is grounded in the live Godot project at
 ### Migration Map — shipped Gauntlet → Sugar Rush
 
 Each shipped Gauntlet task #065–#083 maps to one or more new Sugar Rush
-tasks (#111–#133). Old tasks stay `done`; new tasks carry the work.
+tasks (`#111`–`#131` for Sugar Rush, `#134`–`#145` for the new Mekton Bulls game mode). Old tasks stay `done`; new tasks carry the work.
 
 | Old # | Shipped (Gauntlet)                          | New # | Sugar Rush replacement |
 | ----- | ------------------------------------------- | ----- | ---------------------- |
@@ -69,8 +73,7 @@ tasks (#111–#133). Old tasks stay `done`; new tasks carry the work.
 | —     | —                                           | [128](#task-128) | Mekton Delivery Rules (matching-color only) |
 | —     | —                                           | [129](#task-129) | Half-Point Penalty for Off-Color Finish |
 | —     | —                                           | [131](#task-131) | Self-Knock Rebound (no-candy target) |
-| —     | —                                           | [132](#task-132) | Mekton Bulls Sub-Mode Flag |
-| —     | —                                           | [133](#task-133) | Mekton Bulls Shrinking Arena + Water Flood |
+| —     | —                                           | —               | *(Mekton Bulls has its own game-mode task chain `#134`–`#145`; see [the Mekton Bulls section](#mekton-bulls-new-top-level-game-mode-134145))* |
 
 Grep confirms `sugar_rush`, `mekton_bull`, `shrinking_arena` return
 **0 hits** anywhere in `tekton-enet/scripts/` — every new task is unimplemented.
@@ -139,14 +142,43 @@ Per-cheerleader buffs are still TBD.
 
 ---
 
-## Mekton Bulls (Designed sub-mode)
+## Mekton Bulls (New top-level game mode — `#134`–`#145`)
 
-> Mekton Bulls is a Gauntlet game mode. 2-minute-or-less matches built on
-> placement scoring inside a shrinking arena.
+> Mekton Bulls is a Talaria game mode. 2-minute-or-less matches built on
+> placement scoring inside a shrinking arena with a roaming bull.
 
-A second designed mode. Mektons are no longer a fixed target — they are
-roaming bulls, and survival is placement-scored. **Not implemented** — no
-shrinking-arena code exists in `tekton-enet/scripts/`.
+A second mode in the same family as Sugar Rush, but a **peer** — it has
+its own enum entry (`GameMode.MEKTON_BULLS = 4`), its own
+`MektonBullsManager`, its own lobby string, and shares zero gameplay
+rules with Sugar Rush. Tracking lives under `#134`–`#145`; structural
+skeleton (`#134`) is `progress`, the rest are `todo` and gated on it.
+
+### Game-Mode Separation Pattern (how Talaria splits modes)
+
+Mirroring how `Freemode / Stop n Go / Tekton Doors / Gauntlet` are
+separated today, each Talaria mode owns its own manager node and is
+selected via the `GameMode` enum + `LobbyManager.game_mode` string.
+`scenes/main.gd` dispatches on the string and conditionally creates the
+matching manager. `Freemode` is the baseline with no manager.
+
+| Mode            | Enum                    | Manager                | Arena rules               | Scoring          |
+| --------------- | ----------------------- | ---------------------- | ------------------------- | ---------------- |
+| Freemode        | `FREEMODE = 0`          | (none — baseline)      | Open arena                | Free             |
+| Stop n Go       | `STOP_N_GO = 1`         | `StopNGoManager`       | Phase-based stops         | Phase timer      |
+| Tekton Doors    | `TEKTON_DOORS = 2`      | `PortalModeManager`    | Portal-driven             | Portal capture   |
+| Gauntlet / Sugar Rush | `GAUNTLET = 3`   | `GauntletManager`      | 18 × 18 sticky growth     | Per-second + delivery |
+| **Mekton Bulls** | **`MEKTON_BULLS = 4`** | **`MektonBullsManager`** | **Shrinking arena, bulls** | **Placement** |
+
+Mekton Bulls is its own mode, not a Sugar-Rush sub-flag, because:
+
+- The arena lifetime is different (shrinks mid-match).
+- The scoring system is different (placement, not points-per-time).
+- The hazard is different (roaming bull, not sticky growth).
+- The manager has **zero** code overlap with `GauntletManager`.
+
+Folding it into Gauntlet would couple two different games behind a
+boolean flag — the shipped pattern (one manager per game mode) is the
+correct mirror.
 
 ### Arena & Phases
 
@@ -267,14 +299,38 @@ criteria.
   per-cheerleader buffs and the low-leaderboard activation hook.
   new feature (TBD).
 
-### Mekton Bulls
+### Mekton Bulls (`#134`–`#145`)
 
-- <a id="task-132"></a>**#132 Mekton Bulls Sub-Mode Flag** — register
-  Mekton Bulls as a sub-mode flag on `GameMode.GAUNTLET`.
-  new feature.
-- <a id="task-133"></a>**#133 Mekton Bulls Shrinking Arena + Water Flood**
-  — implement phase board shrinks and outer-ring water elimination.
-  new feature.
+- <a id="task-134"></a>**#134 Mekton Bulls: Game Mode Registration** —
+  `progress`. The structural skeleton: enum entry, `LobbyManager`
+  string, area mapping, `MektonBullsManager` node, `main.gd` dispatch
+  hooks. All other Mekton Bulls tasks are `blocked_by: ["134"]`.
+- <a id="task-135"></a>**#135 Mekton Bulls: Arena Setup & Phase Shrinker**
+  — 20 × 20 → 19 → 18 → 17 phase shrinks.
+- <a id="task-136"></a>**#136 Mekton Bulls: Big Mekton Bull Spawner + Roam AI**
+  — bull entity that roams and charges players.
+- <a id="task-137"></a>**#137 Mekton Bulls: Water Flood Outer Ring** —
+  bull-on-boundary floods the outermost ring; players there die.
+- <a id="task-138"></a>**#138 Mekton Bulls: 3 × 3 Blueprint Auto-Pickup**
+  — small 3 × 3 blueprints with automatic pickup.
+- <a id="task-139"></a>**#139 Mekton Bulls: Power Reward — Freeze OR Knock**
+  — 1 power per blueprint completion (Freeze slow or Knock shove).
+- <a id="task-140"></a>**#140 Mekton Bulls: Placement-Scored Point System**
+  — static min/max points; first out = min, last standing = max,
+  middle = linear interpolation.
+- <a id="task-141"></a>**#141 Mekton Bulls: Bot AI (Bull Avoidance + Knock Steal Pathing)**
+  — bot pathing that avoids the bull and times Freeze/Knock pickups.
+- <a id="task-142"></a>**#142 Mekton Bulls: Player Knock (Mutual Knockback)**
+  — players knock each other (1 cell shove; chains into water or bull).
+- <a id="task-143"></a>**#143 Mekton Bulls: HUD — Bull Tracker, Power Picker, Placement**
+  — bull-tracker arrow, freeze/knock power picker, end-of-match
+  placement overlay.
+- <a id="task-144"></a>**#144 Mekton Bulls: Polish — Bull SFX + Knock Burst**
+  — bull charge/impact SFX, freeze VFX, water-flood splash, knock
+  burst.
+- <a id="task-145"></a>**#145 Mekton Bulls: Round Timer & Phase Auto-Advance**
+  — ≤ 2 min round, auto phase advance every 30 s, early-end on
+  last survivor.
 
 ---
 
