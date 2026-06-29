@@ -22,8 +22,8 @@
   },
   {
     "slug": "gamemode-candy-survival",
-    "title": "Candy Survival",
-    "description": "Candy Survival is a Gauntlet game mode — 2-minute-or-less matches built on Speed, Points, Knock, and Survive.",
+    "title": "GameModes",
+    "description": "Talaria game-mode catalog — Gauntlet (the implemented family) plus the designed Candy Survival and Mekton Bulls modes.",
     "modified": "2026-06-29",
     "file": "gamemode-candy-survival.md"
   }

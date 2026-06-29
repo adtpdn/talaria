@@ -3,8 +3,8 @@
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Candy Survival · Talaria</title>
-        <meta name="description" content="Candy Survival is a Gauntlet game mode — 2-minute-or-less matches built on Speed, Points, Knock, and Survive." />
+        <title>GameModes · Talaria</title>
+        <meta name="description" content="Talaria game-mode catalog — Gauntlet (the implemented family) plus the designed Candy Survival and Mekton Bulls modes." />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
         <link
@@ -393,7 +393,7 @@
                     <a href="../about/">About Talaria</a>
 <a href="../authoring-pages/">Pages Authoring Guide</a>
 <a href="../changelog/">Changelog</a>
-<a href="../gamemode-candy-survival/" class="active">Candy Survival</a>
+<a href="../gamemode-candy-survival/" class="active">GameModes</a>
                 </nav>
                 <div class="actions">
                     <button
@@ -409,20 +409,38 @@
         </header>
 
         <main>
-            <article class="markdown-body"><h1>Candy Survival</h1>
-<p><strong>Candy Survival is a Gauntlet game mode.</strong></p>
-<p>It belongs to the same family as Candy Pump Survival, registered under the <code>GAUNTLET</code> mode enum (<code>scripts/game_mode.gd</code>) and the <code>Gauntlet Arena</code> lobby area. What makes it its own sub-mode is the <strong>speed-and-points</strong> loop: walk the arena, stack candies, feed the Mekton, and survive the chaos for up to <strong>2 minutes per match</strong>.</p>
-<h2>At a Glance</h2>
-<table><thead><tr><th>Pillar</th><th>Description</th></tr></thead><tbody>
-<tr><td>Speed</td><td>Automatic tile pickup, Mekton-paced color rotation, Sugar Rush mutator</td></tr>
-<tr><td>Points</td><td>Per-second carry multiplier, big delivery payouts, half-credit for off-color finishes</td></tr>
-<tr><td>Knock</td><td>Steal candies off other players&#x27; heads; ghosts bypass the same</td></tr>
-<tr><td>Survive</td><td>Sticky floor, shrinking arena, bulls, and water-flood rings</td></tr>
-</tbody></table>
-<p>Matches are <strong>2 minutes or less</strong> — short enough for a queue rotation, long enough to swing placement on points, knock, and timing.</p>
+            <article class="markdown-body"><h1>GameModes</h1>
+<p>This page catalogs Talaria&#x27;s game modes. The currently <strong>implemented</strong> mode family is <strong>Gauntlet</strong> (19/19 core tasks done, 1 polish task in progress). Sitting alongside it are two <strong>designed</strong> modes that have not shipped yet — <strong>Candy Survival</strong> and <strong>Mekton Bulls</strong> — which together form the <em>Speed / Points / Knock / Survive</em> design pillar for the next Gauntlet iteration.</p>
+<p>Matches are <strong>2 minutes or less</strong>, routed through the existing <code>gauntlet_round_duration</code> setting, and orchestrated by <code>GauntletManager</code> from <code>main.gd</code> (see task #065).</p>
 <hr>
-<h2>Sugar Rush Chaos</h2>
-<p>A free-for-all variant. Everyone runs, everyone steals.</p>
+<h2>Gauntlet (Implemented)</h2>
+<p>The shipped game mode. 20×20 arena, growth-tick sticky hazard system, mission tiles, Smack knockback, Cleanser power-up, slow-mo &amp; screenshake feedback.</p>
+<table><thead><tr><th>#</th><th>Status</th><th>Task</th></tr></thead><tbody>
+<tr><td><a href="https://dev.klud.top/talaria/">065</a></td><td>done</td><td>Gauntlet: Game Mode Registration</td></tr>
+<tr><td><a href="https://dev.klud.top/talaria/">066</a></td><td>done</td><td>Gauntlet: Arena Setup (20×20 Grid with Layers)</td></tr>
+<tr><td><a href="https://dev.klud.top/talaria/">067</a></td><td>done</td><td>Gauntlet: Growth Tick System (Replaces Cannon Volley)</td></tr>
+<tr><td><a href="https://dev.klud.top/talaria/">068</a></td><td>done</td><td>Gauntlet: Sticky Cell System (v2)</td></tr>
+<tr><td><a href="https://dev.klud.top/talaria/">069</a></td><td>done</td><td>Gauntlet: Telegraph VFX System (v2)</td></tr>
+<tr><td><a href="https://dev.klud.top/talaria/">070</a></td><td>done</td><td>Gauntlet: Growth Phase Escalation (Replaces Impact Sizes)</td></tr>
+<tr><td><a href="https://dev.klud.top/talaria/">071</a></td><td>done</td><td>Gauntlet: Smack Mechanic</td></tr>
+<tr><td><a href="https://dev.klud.top/talaria/">072</a></td><td>done</td><td>Gauntlet: Cleanser Power-Up</td></tr>
+<tr><td><a href="https://dev.klud.top/talaria/">073</a></td><td>done</td><td>Gauntlet: Candidate Scoring System (Replaces Targeting Intelligence)</td></tr>
+<tr><td><a href="https://dev.klud.top/talaria/">074</a></td><td>done</td><td>Gauntlet: Tile Spawning &amp; Mission System</td></tr>
+<tr><td><a href="https://dev.klud.top/talaria/">075</a></td><td>done</td><td>Gauntlet: Bot AI — Sticky Avoidance &amp; Pathfinding</td></tr>
+<tr><td><a href="https://dev.klud.top/talaria/">077</a></td><td>done</td><td>Gauntlet: Cleanser Icon Fix</td></tr>
+<tr><td><a href="https://dev.klud.top/talaria/">078</a></td><td>done</td><td>Gauntlet: Slow-Mo Effect (1/4 Speed)</td></tr>
+<tr><td><a href="https://dev.klud.top/talaria/">079</a></td><td>done</td><td>Gauntlet: Screenshake Follows Player</td></tr>
+<tr><td><a href="https://dev.klud.top/talaria/">080</a></td><td>done</td><td>Gauntlet: Disable Default Powerups Except Smack</td></tr>
+<tr><td><a href="https://dev.klud.top/talaria/">081</a></td><td>done</td><td>Gauntlet: Telegraph Floor Highlight Before Growth</td></tr>
+<tr><td><a href="https://dev.klud.top/talaria/">082</a></td><td>done</td><td>Gauntlet: Candy Bubble System</td></tr>
+<tr><td><a href="https://dev.klud.top/talaria/">083</a></td><td>done</td><td>Gauntlet: Movement Buffer System</td></tr>
+<tr><td><a href="https://dev.klud.top/talaria/">076</a></td><td>progress</td><td>Gauntlet: Polish — VFX, SFX, HUD &amp; Arena Scene</td></tr>
+</tbody></table>
+<p>All 19 gameplay/AI tasks are <code>done</code>; only the final polish pass (#076) is still in flight.</p>
+<hr>
+<h2>Candy Survival (Designed)</h2>
+<blockquote><p><strong>Candy Survival is a Gauntlet game mode.</strong> 2-minute-or-less matches built on Speed, Points, Knock, and Survive.</p></blockquote>
+<p>A free-for-all variant. Everyone runs, everyone steals, the Mekton sits in the middle as a scoring target.</p>
 <h3>Arena</h3>
 <ul>
 <li><strong>18 × 18</strong> grid.
@@ -432,8 +450,8 @@
 <li><strong>Automatic tile pickup</strong> — no input needed; walking over a matching tile
  counts it.
 </li>
-<li>If your blueprint&#x27;s color runs out, you can finish it with any other
- color, but you only earn <strong>½ points</strong> for that blueprint.
+<li>If your blueprint&#x27;s color runs out, finish it with any other color, but
+ you only earn <strong>½ points</strong> for that blueprint.
 </li>
 </ul>
 <h3>Candies on Your Head</h3>
@@ -442,11 +460,11 @@
 </li>
 <li><strong>No carry cap</strong> — stack as many as you can carry.
 </li>
-<li>Candies grant <strong>points every second</strong>. The more you stack, the **bigger the
- multiplier** on points earned.
+<li>Candies grant <strong>points every second</strong>. The more you stack, the **bigger
+ the multiplier** on points earned.
 </li>
-<li>A <code>×2</code> (or current multiplier) badge must render **next to the Mekton head
- sprite** so opponents see the threat.
+<li>A <code>×2</code> (or current multiplier) badge must render next to the Mekton head
+ sprite so opponents see the threat.
 </li>
 </ul>
 <h3>Mekton Delivery</h3>
@@ -489,8 +507,9 @@
 <h3>Mekton Cheerleaders (TBD)</h3>
 <p>Cheerleaders stand <strong>outside</strong> the board. Each player picks one during lobby. They activate only when you are <strong>low on the leaderboard</strong>. Per-cheerleader buffs are still TBD.</p>
 <hr>
-<h2>Mekton Bulls — Shrinking Arena</h2>
-<p>The second sub-mode. Mektons are no longer a fixed target — they are now roaming bulls.</p>
+<h2>Mekton Bulls (Designed)</h2>
+<blockquote><p><strong>Mekton Bulls is a Gauntlet game mode.</strong> 2-minute-or-less matches built on placement scoring inside a shrinking arena.</p></blockquote>
+<p>A second designed mode. Mektons are no longer a fixed target — they are roaming bulls, and survival is placement-scored, not point-scored.</p>
 <h3>Arena &amp; Phases</h3>
 <p>The board <strong>shrinks every phase</strong>. A bull standing on the outside of the arena <strong>floods the outermost ring with water</strong> — instant elimination.</p>
 <table><thead><tr><th>Phase</th><th>Board</th></tr></thead><tbody>
@@ -524,29 +543,67 @@
 <tr><td>Middle</td><td>Linear between min and max</td></tr>
 </tbody></table>
 <hr>
-<h2>Why &quot;Gauntlet&quot;</h2>
-<p>Candy Survival inherits the Gauntlet contract from <code>gauntlet-game-mode-registration</code>:</p>
+<h2>What&#x27;s Implemented (vs. Candy Survival design)</h2>
+<p>Both designed modes ride on the existing Gauntlet infrastructure. Below is what&#x27;s already shipped (#065–#083) and what would have to be added for Candy Survival / Mekton Bulls to ship.</p>
+<h3>Already in the codebase (referenced by task #)</h3>
 <ul>
-<li>registered under <code>GameMode.GAUNTLET</code>,
+<li><strong>Mode registration, arena, orchestrator</strong> — #065, #066.
 </li>
-<li>routed to the <code>Gauntlet Arena</code> lobby area,
+<li><strong>Growth hazard</strong> (sticky cells, telegraph, growth tick, phase escalation)
+ — #067, #068, #069, #070, #081.
 </li>
-<li>driven by <code>gauntlet_round_duration</code> (≤ 120 s for Candy Survival),
+<li><strong>Mission tiles &amp;amp; tile spawning</strong> — #074.
 </li>
-<li>orchestrated by <code>GauntletManager</code> from <code>main.gd</code>.
+<li><strong>AI (candidate scoring, sticky avoidance, movement buffer)</strong> — #073,
+ #075, #083.
+</li>
+<li><strong>Smack knockback</strong> (re-used as the &quot;Knock&quot; charge) — #071.
+</li>
+<li><strong>Cleanser power-up + icon</strong> — #072, #077.
+</li>
+<li><strong>Feedback</strong> (slow-mo, screenshake) — #078, #079.
+</li>
+<li><strong>Extras</strong> (candy bubble, disable default powerups) — #080, #082.
+</li>
+<li><strong>Polish pass</strong> — #076 (in progress).
 </li>
 </ul>
-<p>What it adds on top of the base Gauntlet:</p>
+<h3>New for Candy Survival</h3>
 <ul>
-<li><strong>Candy stack</strong> economy (head + multiplier + Mekton delivery).
+<li><strong>18 × 18 arena</strong> (currently 20 × 20 in #066).
 </li>
-<li><strong>Knock / Ghost</strong> charges as spawn gear.
+<li><strong>Candy stack on head</strong> with per-second multiplier + visible <code>×N</code> badge.
 </li>
-<li><strong>Sugar Rush</strong> mutator (speed ×2) and <strong>Bull</strong> sub-mode (shrinking arena +
- placement scoring).
+<li><strong>Mekton color rotation</strong> and matching-color delivery rules.
+</li>
+<li><strong>Sugar Rush mutator</strong> (×1.2 per candy, ×2 game-speed, red bar, stacking
+ cap TBD).
+</li>
+<li><strong>Spawn gear</strong>: 5 knock charges OR 5 ghost charges (4 s).
+</li>
+<li><strong>Self-knock rebound</strong> for stealing from a candy-less player.
+</li>
+<li><strong>Mekton Cheerleaders</strong> outside the board, low-leaderboard activation
+ (TBD).
+</li>
+<li><strong>&lt;code&gt;/2&lt;/code&gt; point penalty</strong> for finishing a blueprint with the wrong color.
 </li>
 </ul>
-<p>Everything else — <code>gauntlet_growth_interval</code>, <code>gauntlet_cells_per_tick</code>, the Cleanser power-up, sticky cells, telegraphed tiles — is shared with the rest of the Gauntlet family and described in the per-feature task docs under <code>tasks/</code>.</p></article>
+<h3>New for Mekton Bulls</h3>
+<ul>
+<li><strong>Shrinking arena</strong> (20 → 19 → 18 → 17) with <strong>water-flood outer ring</strong>.
+</li>
+<li><strong>Big Mektons</strong> as roaming bulls (separate from the stationary delivery
+ Mekton).
+</li>
+<li><strong>3 × 3 blueprints</strong> (vs. Candy Survival&#x27;s 1-color focused).
+</li>
+<li><strong>1 power per blueprint</strong>: Freeze or Knock.
+</li>
+<li><strong>Placement-scored</strong> static point system (replaces the per-second
+ trickle).
+</li>
+</ul></article>
         </main>
 
         <footer class="page-footer">
