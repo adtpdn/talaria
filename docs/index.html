@@ -1699,6 +1699,58 @@
                 image-rendering: pixelated;
                 z-index: 0;
             }
+            /* Pages nav dropdown */
+            .pages-dropdown {
+                position: relative;
+                display: inline-flex;
+            }
+            .pages-dropdown-menu {
+                position: absolute;
+                top: calc(100% + 6px);
+                right: 0;
+                min-width: 220px;
+                background: var(--header-bg);
+                border: 1px solid var(--border-color);
+                border-radius: 8px;
+                padding: 6px;
+                box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+                z-index: 250;
+                display: none;
+                flex-direction: column;
+                gap: 2px;
+            }
+            .pages-dropdown.open .pages-dropdown-menu {
+                display: flex;
+            }
+            .pages-dropdown-menu a {
+                display: flex;
+                flex-direction: column;
+                gap: 2px;
+                padding: 8px 10px;
+                border-radius: 6px;
+                color: var(--text-color);
+                text-decoration: none;
+                font-size: 13px;
+                transition: background 0.15s;
+            }
+            .pages-dropdown-menu a:hover {
+                background: var(--surface-variant);
+            }
+            .pages-dropdown-menu .page-title {
+                font-weight: 600;
+            }
+            .pages-dropdown-menu .page-desc {
+                font-size: 11px;
+                color: var(--on-surface-variant);
+                font-weight: 400;
+            }
+            .pages-dropdown-menu .pages-empty {
+                padding: 14px 10px;
+                font-size: 12px;
+                color: var(--on-surface-variant);
+                text-align: center;
+            }
+
             .search-wrap {
                 display: inline-flex;
                 align-items: center;
@@ -1865,6 +1917,20 @@
                             style="font-size: 16px"
                         ></i>
                     </button>
+                    <div class="pages-dropdown" id="pagesDropdown">
+                        <button
+                            id="pagesDropdownBtn"
+                            class="icon-btn"
+                            title="Pages"
+                            aria-haspopup="true"
+                            aria-expanded="false"
+                        >
+                            <i class="ph ph-book-open" style="font-size: 16px"></i>
+                        </button>
+                        <div class="pages-dropdown-menu" id="pagesDropdownMenu">
+                            <div class="pages-empty">Loading…</div>
+                        </div>
+                    </div>
                     <button
                         id="themeToggle"
                         class="icon-btn"
@@ -4074,6 +4140,64 @@
                 applyTheme(getStoredTheme());
             }
 
+            // Pages dropdown — loads /pages.json (same path on both
+            // localhost + GitHub Pages static build).
+            async function initPagesDropdown() {
+                const wrap = document.getElementById("pagesDropdown");
+                const menu = document.getElementById("pagesDropdownMenu");
+                const btn = document.getElementById("pagesDropdownBtn");
+                if (!wrap || !menu || !btn) return;
+
+                const closeMenu = () => {
+                    wrap.classList.remove("open");
+                    btn.setAttribute("aria-expanded", "false");
+                };
+                const toggleMenu = () => {
+                    const open = wrap.classList.toggle("open");
+                    btn.setAttribute("aria-expanded", open ? "true" : "false");
+                };
+
+                btn.addEventListener("click", (e) => {
+                    e.stopPropagation();
+                    toggleMenu();
+                });
+                document.addEventListener("click", (e) => {
+                    if (!wrap.contains(e.target)) closeMenu();
+                });
+                document.addEventListener("keydown", (e) => {
+                    if (e.key === "Escape") closeMenu();
+                });
+
+                let pages = [];
+                try {
+                    const res = await fetch("pages.json");
+                    if (res.ok) pages = await res.json();
+                } catch (err) {
+                    /* static host may not have pages.json — leave menu empty */
+                }
+
+                if (!pages.length) {
+                    menu.innerHTML =
+                        '<div class="pages-empty">No pages yet — add <code>pages/*.md</code></div>';
+                    return;
+                }
+
+                menu.innerHTML = pages
+                    .map(
+                        (p) =>
+                            `<a href="${p.slug}/" title="${(p.description || "")
+                                .replace(/"/g, "&quot;")}">
+                                <span class="page-title">${p.title}</span>
+                                ${
+                                    p.description
+                                        ? `<span class="page-desc">${p.description}</span>`
+                                        : ""
+                                }
+                            </a>`
+                    )
+                    .join("");
+            }
+
             function toggleTheme() {
                 const current = getCurrentTheme();
                 const idx = THEMES.indexOf(current);
@@ -5871,6 +5995,7 @@ Start now`;
 
             // Initial load
             initTheme();
+            initPagesDropdown();
             if (!window._staticMode) loadProjects();
             loadTasks();
 

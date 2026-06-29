@@ -1,0 +1,81 @@
+<svg width="200" height="200" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="gold" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fff0a0"/>
+      <stop offset="40%" stop-color="#ffd700"/>
+      <stop offset="100%" stop-color="#b8860b"/>
+    </linearGradient>
+    <linearGradient id="sole" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#c8a430"/>
+      <stop offset="100%" stop-color="#7a5c00"/>
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="3" stdDeviation="4" flood-color="#00000055"/>
+    </filter>
+  </defs>
+
+  <!-- Shadow base -->
+  <ellipse cx="100" cy="175" rx="55" ry="8" fill="#00000030"/>
+
+  <!-- Sole -->
+  <path d="M45 155 Q100 165 155 155 L152 168 Q100 178 48 168 Z"
+        fill="url(#sole)" stroke="#6a4c00" stroke-width="1.5" filter="url(#shadow)"/>
+  <!-- Sole highlight -->
+  <path d="M60 157 Q100 163 140 157" stroke="#e8c860" stroke-width="1" fill="none" opacity="0.6"/>
+
+  <!-- Toe strap -->
+  <path d="M88 135 Q100 128 112 135" stroke="url(#gold)" stroke-width="5"
+        fill="none" stroke-linecap="round"/>
+
+  <!-- Side straps -->
+  <path d="M72 152 C70 140 74 125 88 115" stroke="url(#gold)" stroke-width="4.5"
+        fill="none" stroke-linecap="round"/>
+  <path d="M128 152 C130 140 126 125 112 115" stroke="url(#gold)" stroke-width="4.5"
+        fill="none" stroke-linecap="round"/>
+
+  <!-- Ankle strap -->
+  <path d="M72 118 Q100 112 128 118" stroke="url(#gold)" stroke-width="4.5"
+        fill="none" stroke-linecap="round"/>
+
+  <!-- LEFT WING - upper large feather -->
+  <path d="M80 112
+           C65 100 40 80 18 52
+           C28 72 50 95 76 118 Z"
+        fill="url(#gold)" stroke="#b8860b" stroke-width="1.2"/>
+  <!-- LEFT WING - middle feather -->
+  <path d="M74 120
+           C55 112 32 96 16 72
+           C28 90 50 108 72 126 Z"
+        fill="#e8c840" stroke="#b8860b" stroke-width="1"/>
+  <!-- LEFT WING - lower feather -->
+  <path d="M70 128
+           C54 124 36 115 24 98
+           C36 112 56 122 70 132 Z"
+        fill="#d4af37" stroke="#b8860b" stroke-width="0.8"/>
+  <!-- Left wing feather lines -->
+  <path d="M60 95 C52 102 48 110 50 118" stroke="#fff0a0" stroke-width="0.8" fill="none" opacity="0.7"/>
+  <path d="M44 80 C38 90 36 100 40 108" stroke="#fff0a0" stroke-width="0.8" fill="none" opacity="0.6"/>
+
+  <!-- RIGHT WING - upper large feather -->
+  <path d="M120 112
+           C135 100 160 80 182 52
+           C172 72 150 95 124 118 Z"
+        fill="url(#gold)" stroke="#b8860b" stroke-width="1.2"/>
+  <!-- RIGHT WING - middle feather -->
+  <path d="M126 120
+           C145 112 168 96 184 72
+           C172 90 150 108 128 126 Z"
+        fill="#e8c840" stroke="#b8860b" stroke-width="1"/>
+  <!-- RIGHT WING - lower feather -->
+  <path d="M130 128
+           C146 124 164 115 176 98
+           C164 112 144 122 130 132 Z"
+        fill="#d4af37" stroke="#b8860b" stroke-width="0.8"/>
+  <!-- Right wing feather lines -->
+  <path d="M140 95 C148 102 152 110 150 118" stroke="#fff0a0" stroke-width="0.8" fill="none" opacity="0.7"/>
+  <path d="M156 80 C162 90 164 100 160 108" stroke="#fff0a0" stroke-width="0.8" fill="none" opacity="0.6"/>
+
+  <!-- Strap buckle / knot center -->
+  <ellipse cx="100" cy="115" rx="7" ry="5" fill="url(#gold)" stroke="#8a6800" stroke-width="1.5"/>
+  <ellipse cx="100" cy="115" rx="3" ry="2" fill="#fff0a0" opacity="0.7"/>
+</svg>

@@ -1,0 +1,23 @@
+[
+  {
+    "slug": "about",
+    "title": "About Talaria",
+    "description": "Project overview, goals, and tech stack for the Talaria task board.",
+    "modified": "2026-06-29",
+    "file": "about.md"
+  },
+  {
+    "slug": "authoring-pages",
+    "title": "Pages Authoring Guide",
+    "description": "How to write and ship a static Talaria page.",
+    "modified": "2026-06-29",
+    "file": "authoring-pages.md"
+  },
+  {
+    "slug": "changelog",
+    "title": "Changelog",
+    "description": "Notable changes shipped to Talaria.",
+    "modified": "2026-06-29",
+    "file": "changelog.md"
+  }
+]

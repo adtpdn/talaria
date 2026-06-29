@@ -1,0 +1,452 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>{{TITLE}} · Talaria</title>
+        <meta name="description" content="{{DESCRIPTION}}" />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600;700&display=swap"
+            rel="stylesheet"
+        />
+        <script src="https://unpkg.com/@phosphor-icons/web"></script>
+        <script>
+            (function () {
+                try {
+                    var stored = localStorage.getItem("theme");
+                    var scheme =
+                        stored === "dark" ||
+                        stored === "light" ||
+                        stored === "ocean" ||
+                        stored === "forest" ||
+                        stored === "sunset" ||
+                        stored === "mono"
+                            ? stored
+                            : "ocean";
+                    document.documentElement.setAttribute("data-theme", scheme);
+                } catch (e) {}
+            })();
+        </script>
+        <style>
+            :root {
+                --bg-color: #1c110e;
+                --surface: #291d1a;
+                --text-color: #f4ded9;
+                --header-bg: #291d1a;
+                --border-color: #58423c;
+                --primary-color: #ffb4a3;
+                --on-primary: #621000;
+                --secondary-color: #ffb4a3;
+                --tertiary-color: #e9c258;
+                --on-tertiary: #3d2e00;
+                --surface-variant: #291d1a;
+                --on-surface-variant: #dfc0b8;
+                --hover-color: #e9c258;
+                --on-hover: #3d2e00;
+            }
+            [data-theme="dark"] {
+                --bg-color: #1c110e;
+                --surface: #291d1a;
+                --text-color: #f4ded9;
+                --header-bg: #291d1a;
+                --border-color: #58423c;
+                --primary-color: #ffb4a3;
+                --on-primary: #621000;
+                --tertiary-color: #e9c258;
+                --on-tertiary: #3d2e00;
+                --surface-variant: #291d1a;
+                --on-surface-variant: #dfc0b8;
+                --hover-color: #e9c258;
+                --on-hover: #3d2e00;
+            }
+            [data-theme="light"] {
+                --bg-color: #fff8f6;
+                --surface: #ffe9e4;
+                --text-color: #251916;
+                --header-bg: #ffe9e4;
+                --border-color: #dfc0b8;
+                --primary-color: #a03218;
+                --on-primary: #ffffff;
+                --tertiary-color: #755b00;
+                --on-tertiary: #ffffff;
+                --surface-variant: #ffe9e4;
+                --on-surface-variant: #58423c;
+                --hover-color: #755b00;
+                --on-hover: #ffffff;
+            }
+            [data-theme="ocean"] {
+                --bg-color: #0b1d2a;
+                --surface: #102a3a;
+                --text-color: #e3f2fd;
+                --header-bg: #102a3a;
+                --border-color: #1f4a64;
+                --primary-color: #4fc3f7;
+                --on-primary: #002a3d;
+                --tertiary-color: #ffd54f;
+                --on-tertiary: #3d2e00;
+                --surface-variant: #102a3a;
+                --on-surface-variant: #b3e5fc;
+                --hover-color: #ffd54f;
+                --on-hover: #3d2e00;
+            }
+            [data-theme="forest"] {
+                --bg-color: #0f1f12;
+                --surface: #16291a;
+                --text-color: #e8f5e9;
+                --header-bg: #16291a;
+                --border-color: #2e4d33;
+                --primary-color: #81c784;
+                --on-primary: #003910;
+                --tertiary-color: #ffcc80;
+                --on-tertiary: #3d2e00;
+                --surface-variant: #16291a;
+                --on-surface-variant: #c8e6c9;
+                --hover-color: #ffcc80;
+                --on-hover: #3d2e00;
+            }
+            [data-theme="sunset"] {
+                --bg-color: #1f0f1a;
+                --surface: #2a1422;
+                --text-color: #fff3e0;
+                --header-bg: #2a1422;
+                --border-color: #5a2e44;
+                --primary-color: #ff8a65;
+                --on-primary: #5a1a00;
+                --tertiary-color: #ffd180;
+                --on-tertiary: #3d2e00;
+                --surface-variant: #2a1422;
+                --on-surface-variant: #ffccbc;
+                --hover-color: #ffd180;
+                --on-hover: #3d2e00;
+            }
+            [data-theme="mono"] {
+                --bg-color: #0e0e0e;
+                --surface: #1a1a1a;
+                --text-color: #e0e0e0;
+                --header-bg: #1a1a1a;
+                --border-color: #3a3a3a;
+                --primary-color: #d0d0d0;
+                --on-primary: #0e0e0e;
+                --tertiary-color: #ffffff;
+                --on-tertiary: #0e0e0e;
+                --surface-variant: #1a1a1a;
+                --on-surface-variant: #bdbdbd;
+                --hover-color: #ffffff;
+                --on-hover: #0e0e0e;
+            }
+
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+            body {
+                font-family: "FiraCode Nerd Font", "Fira Code", "Cascadia Code",
+                    "JetBrains Mono", "Consolas", monospace;
+                background: var(--bg-color);
+                color: var(--text-color);
+                min-height: 100vh;
+                line-height: 1.6;
+            }
+
+            /* Header */
+            .header {
+                background: var(--header-bg);
+                border-bottom: 1px solid var(--border-color);
+                padding: 14px 20px;
+                position: sticky;
+                top: 0;
+                z-index: 100;
+            }
+            .header-content {
+                max-width: 1200px;
+                margin: 0 auto;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                flex-wrap: wrap;
+                gap: 16px;
+            }
+            .brand {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                font-size: 18px;
+                font-weight: 700;
+                color: var(--text-color);
+                text-decoration: none;
+            }
+            .brand img {
+                width: 36px;
+                height: 36px;
+            }
+
+            /* Page nav links */
+            .page-nav {
+                display: flex;
+                gap: 4px;
+                flex-wrap: wrap;
+            }
+            .page-nav a {
+                color: var(--on-surface-variant);
+                text-decoration: none;
+                font-size: 13px;
+                padding: 6px 12px;
+                border-radius: 6px;
+                border: 1px solid transparent;
+                transition: all 0.15s;
+            }
+            .page-nav a:hover {
+                border-color: var(--border-color);
+                color: var(--text-color);
+            }
+            .page-nav a.active {
+                background: var(--primary-color);
+                color: var(--on-primary);
+                border-color: var(--primary-color);
+            }
+            .page-nav a.home {
+                background: var(--surface-variant);
+                border-color: var(--border-color);
+            }
+
+            .actions {
+                display: flex;
+                gap: 8px;
+            }
+            button.icon-btn {
+                background: var(--surface-variant);
+                color: var(--text-color);
+                border: 1px solid var(--border-color);
+                padding: 8px;
+                width: 36px;
+                height: 36px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                cursor: pointer;
+                border-radius: 6px;
+                transition: all 0.15s;
+            }
+            button.icon-btn:hover {
+                background: var(--border-color);
+            }
+
+            /* Article */
+            main {
+                max-width: 820px;
+                margin: 40px auto;
+                padding: 0 24px 80px;
+            }
+            article {
+                background: var(--surface);
+                border: 1px solid var(--border-color);
+                border-radius: 12px;
+                padding: 32px 36px;
+            }
+            .page-meta {
+                font-size: 12px;
+                color: var(--on-surface-variant);
+                text-transform: uppercase;
+                letter-spacing: 0.05em;
+                margin-bottom: 8px;
+            }
+
+            /* Markdown styles — mirror html/index.html .markdown-body */
+            .markdown-body {
+                color: var(--text-color);
+            }
+            .markdown-body h1,
+            .markdown-body h2,
+            .markdown-body h3,
+            .markdown-body h4,
+            .markdown-body h5,
+            .markdown-body h6 {
+                color: var(--primary-color);
+                margin-top: 1.6em;
+                margin-bottom: 0.6em;
+                line-height: 1.25;
+            }
+            .markdown-body > h1:first-child {
+                margin-top: 0;
+                padding-bottom: 0.3em;
+                border-bottom: 1px solid var(--border-color);
+                font-size: 28px;
+            }
+            .markdown-body h2 {
+                padding-bottom: 0.3em;
+                border-bottom: 1px solid var(--border-color);
+                font-size: 22px;
+            }
+            .markdown-body h3 {
+                font-size: 18px;
+            }
+            .markdown-body p,
+            .markdown-body ul,
+            .markdown-body ol,
+            .markdown-body blockquote,
+            .markdown-body pre,
+            .markdown-body table {
+                margin-bottom: 16px;
+            }
+            .markdown-body ul,
+            .markdown-body ol {
+                padding-left: 2em;
+            }
+            .markdown-body li + li {
+                margin-top: 4px;
+            }
+            .markdown-body a {
+                color: var(--primary-color);
+            }
+            .markdown-body strong {
+                color: var(--text-color);
+            }
+            .markdown-body code:not(pre code) {
+                background: var(--surface-variant);
+                border: 1px solid var(--border-color);
+                color: var(--text-color);
+                padding: 2px 6px;
+                font-size: 0.9em;
+            }
+            .markdown-body pre {
+                background: var(--bg-color);
+                border: 1px solid var(--border-color);
+                padding: 14px 16px;
+                overflow-x: auto;
+                font-size: 13px;
+                line-height: 1.5;
+            }
+            .markdown-body pre code {
+                color: var(--text-color);
+                font-family: inherit;
+            }
+            .markdown-body blockquote {
+                padding: 0 1em;
+                color: var(--on-surface-variant);
+                border-left: 0.25em solid var(--border-color);
+            }
+            .markdown-body hr {
+                border: none;
+                border-top: 1px solid var(--border-color);
+                margin: 32px 0;
+            }
+            .markdown-body table {
+                border-spacing: 0;
+                border-collapse: collapse;
+                width: 100%;
+                font-size: 13px;
+            }
+            .markdown-body table th,
+            .markdown-body table td {
+                padding: 8px 12px;
+                border: 1px solid var(--border-color);
+                text-align: left;
+            }
+            .markdown-body table th {
+                background: var(--surface-variant);
+                font-weight: 600;
+            }
+            .markdown-body table tr:nth-child(2n) td {
+                background: var(--surface-variant);
+            }
+
+            footer.page-footer {
+                max-width: 820px;
+                margin: 24px auto 40px;
+                padding: 0 24px;
+                font-size: 12px;
+                color: var(--on-surface-variant);
+                text-align: center;
+            }
+
+            @media (max-width: 720px) {
+                .header-content {
+                    flex-direction: column;
+                    align-items: flex-start;
+                }
+                .page-nav {
+                    width: 100%;
+                    overflow-x: auto;
+                    flex-wrap: nowrap;
+                }
+                article {
+                    padding: 22px 18px;
+                }
+                main {
+                    margin-top: 24px;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <header class="header">
+            <div class="header-content">
+                <a class="brand" href="../">
+                    <img src="../assets/logo.svg" alt="Talaria" />
+                    Talaria
+                </a>
+                <nav class="page-nav">
+                    <a class="home" href="../"><i class="ph ph-house"></i> Board</a>
+                    {{NAV_LINKS}}
+                </nav>
+                <div class="actions">
+                    <button
+                        id="themeToggle"
+                        class="icon-btn"
+                        title="Toggle color scheme"
+                        aria-label="Toggle theme"
+                    >
+                        <i id="themeIcon" class="ph-fill ph-moon-stars"></i>
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <article class="markdown-body">{{BODY}}</article>
+        </main>
+
+        <footer class="page-footer">
+            Talaria · static page rendered from <code>pages/{{SLUG}}.md</code>
+        </footer>
+
+        <script>
+            // Theme toggle (mirror of html/index.html)
+            (function () {
+                var THEMES = ["dark", "light", "ocean", "forest", "sunset", "mono"];
+                var ICONS = {
+                    dark: "ph-fill ph-moon-stars",
+                    light: "ph-fill ph-sun",
+                    ocean: "ph-fill ph-waves",
+                    forest: "ph-fill ph-tree",
+                    sunset: "ph-fill ph-fire",
+                    mono: "ph-fill ph-palette",
+                };
+                function current() {
+                    var t = document.documentElement.getAttribute("data-theme");
+                    return THEMES.includes(t) ? t : "ocean";
+                }
+                function setIcon(t) {
+                    var el = document.getElementById("themeIcon");
+                    if (el) el.className = ICONS[t] || ICONS.ocean;
+                }
+                setIcon(current());
+                var btn = document.getElementById("themeToggle");
+                if (btn) {
+                    btn.addEventListener("click", function () {
+                        var i = THEMES.indexOf(current());
+                        var next = THEMES[(i + 1) % THEMES.length];
+                        document.documentElement.setAttribute("data-theme", next);
+                        try {
+                            localStorage.setItem("theme", next);
+                        } catch (e) {}
+                        setIcon(next);
+                    });
+                }
+            })();
+        </script>
+    </body>
+</html>

@@ -161,6 +161,18 @@ class TalariaAPIHandler(http.server.SimpleHTTPRequestHandler):
             # Permalink: serve index.html for SPA routing
             self._set_headers(200, 'text/html')
             self.wfile.write(HTML_DIR.joinpath('index.html').read_bytes())
+        elif re.match(r'^/pages/[^/]+/?$', p) or re.match(r'^/pages$', p):
+            # Static page permalink served from docs/<slug>/index.html
+            slug = p.strip('/').split('/')[-1] if p.strip('/').startswith('pages') else ''
+            if slug and slug != 'pages':
+                page_file = _BASE / 'docs' / slug / 'index.html'
+                if page_file.exists():
+                    self._set_headers(200, 'text/html')
+                    self.wfile.write(page_file.read_bytes())
+                    return
+            # /pages → list page (also falls back to board for now)
+            self._set_headers(200, 'text/html')
+            self.wfile.write(HTML_DIR.joinpath('index.html').read_bytes())
         elif p == '/api/tasks':
             self._json(_load_json(TASKS_FILE, []))
         elif p == '/api/projects':
