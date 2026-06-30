@@ -223,112 +223,112 @@ criteria.
 
 ### Mode & Arena
 
-- <a id="task-111"></a>**#111 Sugar Rush Mode Registration** — replace
+- **#111 Sugar Rush Mode Registration** — replace
   the `"Candy Pump Survival"` display string with `"Sugar Rush"` and
   document the new mode identity. `supersedes_part_of(#065)`.
-- <a id="task-112"></a>**#112 Sugar Rush Arena Setup 18 × 18** — change
+- **#112 Sugar Rush Arena Setup 18 × 18** — change
   `ARENA_COLUMNS`, `ARENA_ROWS`, `NPC_CENTER`, and the boundary loop.
   `supersedes_part_of(#066)`.
 
 ### Tick & Phases
 
-- <a id="task-113"></a>**#113 Candy Stack Growth Tick** — replace
+- **#113 Candy Stack Growth Tick** — replace
   `_process_growth_tick()` with a per-second candy-stack tick that grows
   the head stack when standing on a matching tile. `supersedes(#067)`.
-- <a id="task-115"></a>**#115 Sugar Rush Stacking** — replace growth-phase
+- **#115 Sugar Rush Stacking** — replace growth-phase
   escalation with rush-stacking logic. `supersedes(#070)`.
 
 ### Telegraph → Mekton Color
 
-- <a id="task-114"></a>**#114 Mekton Color Rotation Telegraph** — replace
+- **#114 Mekton Color Rotation Telegraph** — replace
   telegraph VFX with face-color rotation. `supersedes(#069)`.
-- <a id="task-123"></a>**#123 Mekton Color Beacon** — replace floor
+- **#123 Mekton Color Beacon** — replace floor
   telegraph highlight with a Mekton-face color beacon. `supersedes(#081)`.
 
 ### Knock / Ghost / Spawn Gear
 
-- <a id="task-116"></a>**#116 Knock Charge System** — convert Smack into a
+- **#116 Knock Charge System** — convert Smack into a
   5-charge spawn gear that steals head-stack candies. `supersedes(#071)`.
-- <a id="task-117"></a>**#117 Ghost Charge (4 s)** — replace Cleanser with a
+- **#117 Ghost Charge (4 s)** — replace Cleanser with a
   5-charge, 4-second pass-through immunity. `supersedes(#072)`.
-- <a id="task-121"></a>**#121 Ghost Charge Icon** — replace Cleanser icon
+- **#121 Ghost Charge Icon** — replace Cleanser icon
   with the Ghost Charge icon. `supersedes(#077)`.
-- <a id="task-130"></a>**#130 Spawn Gear: 5 Knock OR 5 Ghost** — give
+- **#130 Spawn Gear: 5 Knock OR 5 Ghost** — give
   each player exactly one of the two gears on spawn. `supersedes(#080)`.
-- <a id="task-131"></a>**#131 Self-Knock Rebound** — knocking a player with
+- **#131 Self-Knock Rebound** — knocking a player with
   no head-stack bounces the knock back at the attacker. new feature.
 
 ### Bot AI & Pathing
 
-- <a id="task-118"></a>**#118 Bot AI for Candy Survival** — bot
+- **#118 Bot AI for Candy Survival** — bot
   pathfinding that prefers candy-rich tiles, avoids dangerous players,
   and times deliveries to Mekton color. `supersedes(#073, #075)`.
-- <a id="task-119"></a>**#119 Single-Color Blueprint Auto-Pickup** —
+- **#119 Single-Color Blueprint Auto-Pickup** —
   rework mission tiles into single-color blueprints with automatic pickup.
   `supersedes(#074)`.
-- <a id="task-125"></a>**#125 Auto Tile Pickup Pathing** — replace
+- **#125 Auto Tile Pickup Pathing** — replace
   movement-buffer penalties with an auto-pickup-aware path cost.
   `supersedes(#083)`.
 
 ### Head Stack & Delivery
 
-- <a id="task-127"></a>**#127 Head Stack Multiplier + ×N Badge UI** —
+- **#127 Head Stack Multiplier + ×N Badge UI** —
   render the running `×N` multiplier next to the Mekton head sprite.
   new feature.
-- <a id="task-128"></a>**#128 Mekton Delivery Rules** — only matching-color
+- **#128 Mekton Delivery Rules** — only matching-color
   candies deliver; mismatches stay on the head. new feature.
-- <a id="task-129"></a>**#129 Half-Point Penalty for Off-Color Finish** —
+- **#129 Half-Point Penalty for Off-Color Finish** —
   award ½ points when a blueprint is finished with a non-matching color.
   new feature.
-- <a id="task-124"></a>**#124 Head-Stack Delivery Bubble** — convert the
+- **#124 Head-Stack Delivery Bubble** — convert the
   candy-bubble spawner into a delivery-triggered VFX/SFX burst.
   `supersedes_part_of(#082)`.
 
 ### Mutator & Feedback
 
-- <a id="task-122"></a>**#122 Sugar Rush Speed ×2** — replace slow-mo
+- **#122 Sugar Rush Speed ×2** — replace slow-mo
   (¼ speed, 4 s) with Sugar Rush (×2 speed, 2 s base × 1.2 per candy).
   `supersedes(#078)`.
-- <a id="task-120"></a>**#120 Sugar Rush Polish — Rush Bar + ×N Badge** —
+- **#120 Sugar Rush Polish — Rush Bar + ×N Badge** —
   fold the remaining polish work onto Sugar Rush visuals.
   `supersedes(#076)`.
 
 ### Cheerleaders
 
-- <a id="task-126"></a>**#126 Mekton Cheerleaders (TBD)** — design
+- **#126 Mekton Cheerleaders (TBD)** — design
   per-cheerleader buffs and the low-leaderboard activation hook.
   new feature (TBD).
 
 ### Mekton Bulls (`#134`–`#145`)
 
-- <a id="task-134"></a>**#134 Mekton Bulls: Game Mode Registration** —
+- **#134 Mekton Bulls: Game Mode Registration** —
   `progress`. The structural skeleton: enum entry, `LobbyManager`
   string, area mapping, `MektonBullsManager` node, `main.gd` dispatch
   hooks. All other Mekton Bulls tasks are `blocked_by: ["134"]`.
-- <a id="task-135"></a>**#135 Mekton Bulls: Arena Setup & Phase Shrinker**
+- **#135 Mekton Bulls: Arena Setup & Phase Shrinker**
   — 20 × 20 → 19 → 18 → 17 phase shrinks.
-- <a id="task-136"></a>**#136 Mekton Bulls: Big Mekton Bull Spawner + Roam AI**
+- **#136 Mekton Bulls: Big Mekton Bull Spawner + Roam AI**
   — bull entity that roams and charges players.
-- <a id="task-137"></a>**#137 Mekton Bulls: Water Flood Outer Ring** —
+- **#137 Mekton Bulls: Water Flood Outer Ring** —
   bull-on-boundary floods the outermost ring; players there die.
-- <a id="task-138"></a>**#138 Mekton Bulls: 3 × 3 Blueprint Auto-Pickup**
+- **#138 Mekton Bulls: 3 × 3 Blueprint Auto-Pickup**
   — small 3 × 3 blueprints with automatic pickup.
-- <a id="task-139"></a>**#139 Mekton Bulls: Power Reward — Freeze OR Knock**
+- **#139 Mekton Bulls: Power Reward — Freeze OR Knock**
   — 1 power per blueprint completion (Freeze slow or Knock shove).
-- <a id="task-140"></a>**#140 Mekton Bulls: Placement-Scored Point System**
+- **#140 Mekton Bulls: Placement-Scored Point System**
   — static min/max points; first out = min, last standing = max,
   middle = linear interpolation.
-- <a id="task-141"></a>**#141 Mekton Bulls: Bot AI (Bull Avoidance + Knock Steal Pathing)**
+- **#141 Mekton Bulls: Bot AI (Bull Avoidance + Knock Steal Pathing)**
   — bot pathing that avoids the bull and times Freeze/Knock pickups.
-- <a id="task-142"></a>**#142 Mekton Bulls: Player Knock (Mutual Knockback)**
+- **#142 Mekton Bulls: Player Knock (Mutual Knockback)**
   — players knock each other (1 cell shove; chains into water or bull).
-- <a id="task-143"></a>**#143 Mekton Bulls: HUD — Bull Tracker, Power Picker, Placement**
+- **#143 Mekton Bulls: HUD — Bull Tracker, Power Picker, Placement**
   — bull-tracker arrow, freeze/knock power picker, end-of-match
   placement overlay.
-- <a id="task-144"></a>**#144 Mekton Bulls: Polish — Bull SFX + Knock Burst**
+- **#144 Mekton Bulls: Polish — Bull SFX + Knock Burst**
   — bull charge/impact SFX, freeze VFX, water-flood splash, knock
   burst.
-- <a id="task-145"></a>**#145 Mekton Bulls: Round Timer & Phase Auto-Advance**
+- **#145 Mekton Bulls: Round Timer & Phase Auto-Advance**
   — ≤ 2 min round, auto phase advance every 30 s, early-end on
   last survivor.
 

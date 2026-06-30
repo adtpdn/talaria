@@ -1,13 +1,13 @@
 [
   {
     "slug": "about",
-    "title": "About Talaria",
+    "title": "About",
     "description": "Project overview, goals, and tech stack for the Talaria task board.",
     "modified": "2026-06-29",
     "file": "about.md"
   },
   {
-    "slug": "authoring-pages",
+    "slug": "authoring",
     "title": "Pages Authoring Guide",
     "description": "How to write and ship a static Talaria page.",
     "modified": "2026-06-29",
@@ -21,9 +21,9 @@
     "file": "changelog.md"
   },
   {
-    "slug": "gamemode-candy-survival",
+    "slug": "gamemodes",
     "title": "GameModes",
-    "description": "Talaria game-mode catalog. Gauntlet (shipped, as Candy Pump Survival) → migrating to Sugar Rush, plus the new Mekton Bulls game mode (#134-#145).",
+    "description": "Talaria game-mode catalog",
     "modified": "2026-06-29",
     "file": "gamemode-candy-survival.md"
   }
